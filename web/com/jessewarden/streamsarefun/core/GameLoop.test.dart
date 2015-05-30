@@ -17,7 +17,7 @@ void main() {
       expect(true, isNotNull);
     });
 
-    test("async works", () async
+    test("GameLoop starts and generats a tick using our mocked window", () async
     {
       bool called = false;
       GameLoop gameLoop = new GameLoop();

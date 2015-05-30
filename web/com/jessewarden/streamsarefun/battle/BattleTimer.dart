@@ -25,8 +25,8 @@ class BattleTimer
   bool running = false;
 
   StreamController<BattleTimerEvent> _streamController;
-  EventStream<BattleTimerEvent> stream;
-  EventStream<GameLoopEvent> _gameLoopStream;
+  Stream<BattleTimerEvent> stream;
+  Stream<GameLoopEvent> _gameLoopStream;
   StreamSubscription _gameLoopStreamSubscription;
 
   num get progress => gauge / MAX;
