@@ -15,7 +15,7 @@ class WindowMock
 	{
 		_streamController = new StreamController<num>(onPause: _onPause, onResume: _onResume);
 		stopwatch = new Stopwatch();
-		timer = new Timer(new Duration(milliseconds: 20), onTimer);
+		timer = new Timer.periodic(new Duration(milliseconds: 20), onTimer);
 	}
 
 	Future<num> get animationFrame
@@ -38,13 +38,16 @@ class WindowMock
 		start();
 	}
 
-	void onTimer()
+	void onTimer(Timer timer)
 	{
+		print("onTimer");
 		if (running == true)
 		{
+			print("we're running, so adding milliseconds: ${stopwatch.elapsedMilliseconds}");
 			_streamController.add(stopwatch.elapsedMilliseconds);
 			if(callbacks.length > 0)
 			{
+				print("found a callback, so calling it");
 				var callback = callbacks.removeLast();
 				callback(stopwatch.elapsedMilliseconds);
 			}

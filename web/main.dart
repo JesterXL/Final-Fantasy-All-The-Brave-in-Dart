@@ -3,6 +3,7 @@ import 'dart:core';
 import 'dart:async';
 import 'dart:math';
 import 'package:stagexl/stagexl.dart';
+import 'package:observe/observe.dart';
 import 'com/jessewarden/streamsarefun/core/streamscore.dart';
 import 'com/jessewarden/streamsarefun/battle/battlecore.dart';
 import 'com/jessewarden/streamsarefun/components/components.dart';
@@ -29,7 +30,9 @@ void main()
 
 	//testGameLoop();
 //  testBattleTimer();
-	testTextDropper();
+//	testTextDropper();
+//	testBattleTimerBar();
+	testInitiative();
 }
 
 
@@ -103,5 +106,52 @@ void testTextDropper()
 	{
 		print("chaka");
 		textDropper.addTextDrop(spot1, value);
+	});
+}
+
+void testBattleTimerBar()
+{
+	BattleTimerBar bar = new BattleTimerBar();
+	stage.addChild(bar);
+
+	GameLoop gameLoop = new GameLoop();
+	BattleTimer timer = new BattleTimer(gameLoop.stream, BattleTimer.MODE_CHARACTER);
+	gameLoop.start();
+	timer.start();
+	timer.stream
+	.where((BattleTimerEvent event)
+	{
+		return event.type == BattleTimerEvent.PROGRESS;
+	})
+	.listen((BattleTimerEvent event)
+	{
+		bar.percentage = event.percentage;
+	});
+}
+
+void testInitiative()
+{
+	GameLoop loop = new GameLoop();
+	loop.start();
+
+	ObservableList<Player> players = new ObservableList<Player>();
+	players.add(new Player(Player.WARRIOR));
+	players.add(new Player(Player.WARRIOR));
+	players.add(new Player(Player.WARRIOR));
+
+	ObservableList<Monster> monsters = new ObservableList<Monster>();
+	monsters.add(new Monster(Monster.GOBLIN));
+	monsters.add(new Monster(Monster.GOBLIN));
+	monsters.add(new Monster(Monster.GOBLIN));
+
+	Initiative initiative = new Initiative(loop.stream, players, monsters);
+	initiative.init();
+	initiative.stream.listen((InitiativeEvent event)
+	{
+		print("Initiative's listen event type: " + event.type.toString());
+	}).onError((error)
+	{
+		print("Initiative's error: $error");
+		loop.pause();
 	});
 }

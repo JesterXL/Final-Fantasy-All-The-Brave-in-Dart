@@ -19,7 +19,7 @@ class TextDropper
 		field.x = point.x + 2;
 		field.y = point.y;
 		field.text = value.toString();
-		print("color: $color");
+//		print("color: $color");
 		field.defaultTextFormat.color = color;
 
 		// TODO: object pool these

@@ -1,6 +1,6 @@
 library streamscore;
 
-//import 'dart:html';
+import 'dart:html';
 import 'dart:core';
 import 'dart:async';
 import '../mocks/mocks.dart';

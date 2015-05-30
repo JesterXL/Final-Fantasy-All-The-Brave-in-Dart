@@ -32,7 +32,7 @@ class GameLoop
 
   void tick(num time)
   {
-    print("time: $time");
+//    print("time: $time and running: $running");
     if(running)
     {
       if(resetDirty)
@@ -71,7 +71,7 @@ class GameLoop
 
   void start()
   {
-    if(running == false)
+    if (running == false)
     {
       running = true;
       _request();
@@ -82,5 +82,6 @@ class GameLoop
   void _request()
   {
     mock.animationFrame.then(tick);
+//    window.animationFrame.then(tick);
   }
 }
