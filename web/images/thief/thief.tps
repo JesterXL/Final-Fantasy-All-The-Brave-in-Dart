@@ -166,12 +166,12 @@
         </struct>
         <key>fileList</key>
         <array>
-            <filename>theif_6.png</filename>
             <filename>thief_5.png</filename>
             <filename>thief_4.png</filename>
             <filename>thief_3.png</filename>
             <filename>thief_2.png</filename>
             <filename>thief_1.png</filename>
+            <filename>thief_6.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

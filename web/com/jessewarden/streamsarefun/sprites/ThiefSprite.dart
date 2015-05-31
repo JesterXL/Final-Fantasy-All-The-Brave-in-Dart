@@ -25,10 +25,10 @@ class ThiefSprite extends SpriteSheet
 			..add("thief_4");
 
 		getAnimationList("attack")
-			..add("thief_5");
+			..add("thief_6");
 
 		getAnimationList("hurt")
-			..add("thief_6");
+			..add("thief_5");
 	}
 
 	List<String> getAnimationList(String name)
