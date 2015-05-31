@@ -117,13 +117,13 @@ class CharacterList extends DisplayObjectContainer
 		switch(player.characterType)
 		{
 			case Player.WARRIOR:
-				return new LockeSprite(resourceManager);
+				return new WarriorSprite(resourceManager);
 
 			case Player.BLACK_MAGE:
-				return new LockeSprite(resourceManager);
+				return new BlackMageSprite(resourceManager);
 
 			case Player.THIEF:
-				return new LockeSprite(resourceManager);
+				return new ThiefSprite(resourceManager);
 		}
 		return null;
 	}

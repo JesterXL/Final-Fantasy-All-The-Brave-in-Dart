@@ -1,31 +1,34 @@
 part of sprites;
 
-class BlackMageSprite extends SpriteSheet
+class ThiefSprite extends SpriteSheet
 {
 
-	BlackMageSprite(ResourceManager resourceManager)
+	ThiefSprite(ResourceManager resourceManager)
 	{
 		this.resourceManager = resourceManager;
-		if (resourceManager.containsTextureAtlas('blackmage') == false)
+		if (resourceManager.containsTextureAtlas('thief') == false)
 		{
-			resourceManager.addTextureAtlas('blackmage', 'images/blackmage/blackmage.json', TextureAtlasFormat.JSONARRAY);
+			resourceManager.addTextureAtlas('thief', 'images/thief/thief.json', TextureAtlasFormat.JSONARRAY);
 		}
 
 		getAnimationList("idle")
-			..add("blackmage_1");
+			..add("thief_1");
 
 		getAnimationList("ready")
-			..add("blackmage_2");
+			..add("thief_2");
 
 		getAnimationList("cheer")
-			..add("blackmage_1")
-			..add("blackmage_3");
+			..add("thief_1")
+			..add("thief_3");
 
 		getAnimationList("hit")
-			..add("blackmage_4");
+			..add("thief_4");
 
 		getAnimationList("attack")
-			..add("blackmage_5");
+			..add("thief_5");
+
+		getAnimationList("hurt")
+			..add("thief_6");
 	}
 
 	List<String> getAnimationList(String name)
@@ -37,7 +40,7 @@ class BlackMageSprite extends SpriteSheet
 
 	void init()
 	{
-		_textureAtlas = resourceManager.getTextureAtlas('blackmage');
+		_textureAtlas = resourceManager.getTextureAtlas('thief');
 		idle();
 	}
 
@@ -65,5 +68,10 @@ class BlackMageSprite extends SpriteSheet
 	void attack()
 	{
 		currentCycle = cycles["attack"];
+	}
+
+	void hurt()
+	{
+		currentCycle = cycles["hurt"];
 	}
 }
