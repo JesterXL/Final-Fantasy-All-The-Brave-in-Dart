@@ -15,7 +15,6 @@ class CharacterList extends DisplayObjectContainer
 	              Stage this.stage,
 	              RenderLoop this.renderLoop})
 	{
-		init();
 	}
 
 	void init()
@@ -91,6 +90,7 @@ class CharacterList extends DisplayObjectContainer
 			sheet.y = startYPlayer;
 			startXPlayer += 16;
 			startYPlayer += 36;
+			print("sheet: $sheet");
 
 			player.stream.listen((CharacterEvent event)
 			{
