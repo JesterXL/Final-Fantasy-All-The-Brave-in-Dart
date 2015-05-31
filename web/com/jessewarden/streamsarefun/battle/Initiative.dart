@@ -58,7 +58,7 @@ class Initiative
 				// NOTE: pausing the BattleTimer, not the Stream listener... lol, streams!
 				matched.battleTimer.pause();
 				Character targetCharacter = matched.character;
-				print("character.id: ${targetCharacter.ID}");
+//				print("character.id: ${targetCharacter.ID}");
 				charactersReady.add(targetCharacter);
 				_streamController.add(new InitiativeEvent(InitiativeEvent.CHARACTER_READY,
 				character: targetCharacter));
@@ -96,12 +96,10 @@ class Initiative
 	{
 		if(character is Player)
 		{
-			print("player...");
 			return BattleTimer.MODE_CHARACTER;
 		}
 		else
 		{
-			print("monster...");
 			return BattleTimer.MODE_MONSTER;
 		}
 	}

@@ -9,6 +9,7 @@ import 'package:observe/observe.dart';
 part 'BattleTimer.dart';
 part 'BattleTimerEvent.dart';
 part 'Character.dart';
+part 'CharacterEvent.dart';
 part 'Player.dart';
 part 'Monster.dart';
 part 'BattleMath.dart';

@@ -185,7 +185,7 @@ class BattleTimer
 		// dispatch progress = gauge / MAX;
 		if (gauge >= MAX)
 		{
-			print("gauge is larger than MAX, dispatching complete.");
+//			print("gauge is larger than MAX, dispatching complete.");
 			// dispatch complete
 			gauge = MAX;
 			_streamController.add(new BattleTimerEvent(BattleTimerEvent.COMPLETE, this));
@@ -213,7 +213,7 @@ class BattleTimer
 		// dispatch progress = gauge / MAX;
 		if (gauge >= MAX)
 		{
-			print("gauge is larger than MAX, dispatching complete.");
+//			print("gauge is larger than MAX, dispatching complete.");
 			// dispatch complete
 			gauge = MAX;
 			_streamController.add(new BattleTimerEvent(BattleTimerEvent.COMPLETE, this));
