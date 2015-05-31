@@ -1,34 +1,31 @@
 part of sprites;
 
-class WarriorSprite extends SpriteSheet
+class BlackMageSprite extends SpriteSheet
 {
 
-	WarriorSprite(ResourceManager resourceManager)
+	BlackMageSprite(ResourceManager resourceManager)
 	{
 		this.resourceManager = resourceManager;
-		if (resourceManager.containsTextureAtlas('warrior') == false)
+		if (resourceManager.containsTextureAtlas('blackmage') == false)
 		{
-			resourceManager.addTextureAtlas('warrior', 'images/warrior/warrior.json', TextureAtlasFormat.JSONARRAY);
+			resourceManager.addTextureAtlas('blackmage', 'images/blackmage/blackmage.json', TextureAtlasFormat.JSONARRAY);
 		}
 
 		getAnimationList("idle")
-			..add("warrior_1");
+			..add("blackmage_1");
 
 		getAnimationList("ready")
-			..add("warrior_2");
+			..add("blackmage_1");
 
 		getAnimationList("cheer")
-			..add("warrior_1")
-			..add("warrior_3");
+			..add("blackmage_1")
+			..add("blackmage_3");
 
 		getAnimationList("hit")
-			..add("warrior_4");
+			..add("blackmage_4");
 
 		getAnimationList("attack")
-			..add("warrior_5");
-
-		getAnimationList("hurt")
-			..add("warrior_6");
+			..add("blackmage_5");
 	}
 
 	List<String> getAnimationList(String name)
@@ -40,7 +37,7 @@ class WarriorSprite extends SpriteSheet
 
 	void init()
 	{
-		_textureAtlas = resourceManager.getTextureAtlas('warrior');
+		_textureAtlas = resourceManager.getTextureAtlas('blackmage');
 		idle();
 	}
 
@@ -68,10 +65,5 @@ class WarriorSprite extends SpriteSheet
 	void attack()
 	{
 		currentCycle = cycles["attack"];
-	}
-
-	void hurt()
-	{
-		currentCycle = cycles["hurt"];
 	}
 }

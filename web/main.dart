@@ -296,20 +296,22 @@ void testWarriorSprite()
 	Juggler juggler = renderLoop.juggler;
 
 	WarriorSprite warrior = new WarriorSprite(resourceManager);
+	BlackMageSprite blackMage = new BlackMageSprite(resourceManager);
 	warrior.x = 100;
 	warrior.y = 50;
+	blackMage.x = 100;
+	blackMage.y = 90;
 	resourceManager.load()
 	.then((_)
 	{
-		print("ResourceManage loaded");
 		stage.addChild(warrior);
-		return warrior.init();
-	})
-	.then((_)
-	{
+		stage.addChild(blackMage);
+		warrior.init();
+		blackMage.init();
 		return new Future.delayed(new Duration(seconds: 1), ()
 		{
 			warrior.ready();
+			blackMage.ready();
 		});
 	})
 	.then((_)
@@ -317,6 +319,7 @@ void testWarriorSprite()
 		return new Future.delayed(new Duration(seconds: 1), ()
 		{
 			warrior.cheer();
+			blackMage.cheer();
 		});
 	})
 	.then((_)
@@ -325,10 +328,18 @@ void testWarriorSprite()
 		{
 			warrior.attack();
 
-			var ac = new AnimationChain();
-			ac.add(new Tween(warrior, 0.5, TransitionFunction.linear)..animate.x.to(20));
-			ac.add(new Tween(warrior, 0.5, TransitionFunction.linear)..animate.x.to(100));
-			juggler.add(ac);
+			var acWarrior = new AnimationChain();
+			acWarrior.add(new Tween(warrior, 0.5, TransitionFunction.linear)..animate.x.to(20));
+			acWarrior.add(new Tween(warrior, 0.5, TransitionFunction.linear)..animate.x.to(100));
+
+			var acBlackMage = new AnimationChain();
+			acBlackMage.add(new Tween(blackMage, 0.5, TransitionFunction.linear)..animate.x.to(20)..onComplete = () => blackMage.attack());
+			acBlackMage.add(new Tween(blackMage, 0.5, TransitionFunction.linear)
+				..animate.x.to(100)
+				..delay = 0.5
+				..onStart = () => blackMage.ready());
+			juggler.add(acWarrior);
+			juggler.add(acBlackMage);
 
 
 		});
@@ -338,6 +349,7 @@ void testWarriorSprite()
 		return new Future.delayed(new Duration(seconds: 1), ()
 		{
 			warrior.idle();
+			blackMage.idle();
 		});
 	})
 	.catchError((e) => print(e));

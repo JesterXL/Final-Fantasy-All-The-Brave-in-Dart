@@ -1,0 +1,52 @@
+{"frames": [
+
+{
+	"filename": "blackmage_1.png",
+	"frame": {"x":0,"y":0,"w":40,"h":40},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
+	"sourceSize": {"w":40,"h":40}
+},
+{
+	"filename": "blackmage_2.png",
+	"frame": {"x":40,"y":0,"w":40,"h":40},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
+	"sourceSize": {"w":40,"h":40}
+},
+{
+	"filename": "blackmage_3.png",
+	"frame": {"x":80,"y":0,"w":40,"h":40},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
+	"sourceSize": {"w":40,"h":40}
+},
+{
+	"filename": "blackmage_4.png",
+	"frame": {"x":120,"y":0,"w":40,"h":40},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
+	"sourceSize": {"w":40,"h":40}
+},
+{
+	"filename": "blackmage_5.png",
+	"frame": {"x":160,"y":0,"w":40,"h":40},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
+	"sourceSize": {"w":40,"h":40}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker ",
+	"version": "1.0",
+	"image": "blackmage.png",
+	"format": "RGBA8888",
+	"size": {"w":200,"h":40},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:3cf0154d0691a8764c984ebac55935a6:ae8b34ce6cd4bf12890ba1b77bcc7e53:ffe24b5d28cafc97d388a939cc919757$"
+}
+}
