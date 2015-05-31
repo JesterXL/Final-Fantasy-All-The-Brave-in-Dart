@@ -2,6 +2,7 @@ library components;
 
 import 'dart:core';
 import 'package:stagexl/stagexl.dart';
+import 'package:jxlstatemachine/jxlstatemachine.dart';
 import '../battle/battlecore.dart';
 import '../sprites/sprites.dart';
 

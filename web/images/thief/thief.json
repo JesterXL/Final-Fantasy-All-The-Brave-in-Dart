@@ -2,59 +2,59 @@
 
 {
 	"filename": "thief_1.png",
-	"frame": {"x":0,"y":0,"w":40,"h":40},
+	"frame": {"x":0,"y":0,"w":80,"h":80},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
-	"sourceSize": {"w":40,"h":40}
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":80},
+	"sourceSize": {"w":80,"h":80}
 },
 {
 	"filename": "thief_2.png",
-	"frame": {"x":40,"y":0,"w":40,"h":40},
+	"frame": {"x":80,"y":0,"w":80,"h":80},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
-	"sourceSize": {"w":40,"h":40}
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":80},
+	"sourceSize": {"w":80,"h":80}
 },
 {
 	"filename": "thief_3.png",
-	"frame": {"x":80,"y":0,"w":40,"h":40},
+	"frame": {"x":160,"y":0,"w":80,"h":80},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
-	"sourceSize": {"w":40,"h":40}
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":80},
+	"sourceSize": {"w":80,"h":80}
 },
 {
 	"filename": "thief_4.png",
-	"frame": {"x":120,"y":0,"w":40,"h":40},
+	"frame": {"x":240,"y":0,"w":80,"h":80},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
-	"sourceSize": {"w":40,"h":40}
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":80},
+	"sourceSize": {"w":80,"h":80}
 },
 {
 	"filename": "thief_5.png",
-	"frame": {"x":160,"y":0,"w":40,"h":40},
+	"frame": {"x":320,"y":0,"w":80,"h":80},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
-	"sourceSize": {"w":40,"h":40}
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":80},
+	"sourceSize": {"w":80,"h":80}
 },
 {
 	"filename": "thief_6.png",
-	"frame": {"x":200,"y":0,"w":40,"h":40},
+	"frame": {"x":400,"y":0,"w":80,"h":80},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
-	"sourceSize": {"w":40,"h":40}
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":80},
+	"sourceSize": {"w":80,"h":80}
 }],
 "meta": {
 	"app": "http://www.codeandweb.com/texturepacker ",
 	"version": "1.0",
 	"image": "thief.png",
 	"format": "RGBA8888",
-	"size": {"w":240,"h":40},
+	"size": {"w":480,"h":80},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:d394898a5f50a358d3b93bf4816b42f1:82621e03b210747f86baed5242bfcb24:2d8f2df48a08cd3365d2232f3ef8cc85$"
+	"smartupdate": "$TexturePacker:SmartUpdate:c052b788e23a776b1ce178dbb0bba6b7:85138ee6ea2ef29bc6a74ade66c929a2:2d8f2df48a08cd3365d2232f3ef8cc85$"
 }
 }

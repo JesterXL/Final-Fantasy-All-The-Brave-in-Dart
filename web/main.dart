@@ -115,8 +115,10 @@ void testTextDropper()
 
 void testBattleTimerBar()
 {
-	BattleTimerBar bar = new BattleTimerBar();
+	BattleTimerBar bar = new BattleTimerBar( new RenderLoop());
 	stage.addChild(bar);
+	bar.x = 20;
+	bar.y = 20;
 
 	GameLoop gameLoop = new GameLoop();
 	BattleTimer timer = new BattleTimer(gameLoop.stream, BattleTimer.MODE_CHARACTER);

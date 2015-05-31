@@ -14,7 +14,7 @@ class BattleTimer
 
 	num lastTick = 0;
 
-	int speed = 0;
+	int speed = 200;
 	int battleSpeed = 3;
 	int effect = EFFECT_NORMAL;
 	String _mode = null;

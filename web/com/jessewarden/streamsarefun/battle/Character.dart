@@ -58,7 +58,7 @@ class Character
 	StreamController<CharacterEvent> _controller;
 	Stream<CharacterEvent> stream;
 
-	Character({int this.speed: 0,
+	Character({int this.speed: 80,
 	          int this.strength: 0,
 	          int this.stamina: 0,
 	          int this.magicBlock: 0,
