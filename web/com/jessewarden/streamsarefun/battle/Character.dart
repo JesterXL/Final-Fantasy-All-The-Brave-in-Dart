@@ -16,6 +16,9 @@ class Character
 	bool dead = false;
 	int level = 1;
 
+	int ID = -1;
+	static int INCREMENT = 0;
+
 	String _battleState;
 	int _hitPoints = 0;
 
@@ -68,6 +71,7 @@ class Character
 	{
 		_controller = new StreamController();
 		stream = _controller.stream.asBroadcastStream();
+		ID = INCREMENT++;
 	}
 
 	void toggleRow()

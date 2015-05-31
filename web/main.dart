@@ -33,6 +33,8 @@ void main()
 //	testTextDropper();
 //	testBattleTimerBar();
 	testInitiative();
+
+//	testMath();
 }
 
 
@@ -145,13 +147,31 @@ void testInitiative()
 	monsters.add(new Monster(Monster.GOBLIN));
 
 	Initiative initiative = new Initiative(loop.stream, players, monsters);
-	initiative.init();
-	initiative.stream.listen((InitiativeEvent event)
+	initiative.stream.listen((event)
 	{
-		print("Initiative's listen event type: " + event.type.toString());
+		if(event.type == InitiativeEvent.CHARACTER_READY)
+		{
+			print("character: ${event.character}");
+		}
 	}).onError((error)
 	{
 		print("Initiative's error: $error");
 		loop.pause();
 	});
+}
+
+// ((96 * (Speed + 20)) * (255 - ((Battle Speed - 1) * 24))) / 16
+// ((96 * (64 + 20)) * (255 - ((3 - 1) * 24))) / 16
+// ((96 * 84) * (255 - (2 * 24))) / 16
+// (8064 * (255 - (2 * 24))) / 16
+// (8064 * (255 - 48)) / 16
+// (8064 * 207) / 16
+// 1669248 / 16
+// 1669248 / 16
+void testMath()
+{
+	var result = (8064 * 183) / 16;
+	print(result);
+	// -1407672.0
+	// -1407672.0
 }
