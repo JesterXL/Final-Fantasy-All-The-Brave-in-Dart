@@ -177,20 +177,16 @@ class BattleTimer
 		stopListenToGameLoop();
 	}
 
-	void onCharacterTick()
+void onCharacterTick()
+{
+	num result = (((effect * (speed + 20)) / 16));
+	gauge += result.round();
+	if (gauge >= MAX)
 	{
-//		print("BattleTimer::onCharacterTick, effect: $effect, speed: $speed");
-		num result = (((effect * (speed + 20)) / 16));
-		gauge += result.round();
-		// dispatch progress = gauge / MAX;
-		if (gauge >= MAX)
-		{
-//			print("gauge is larger than MAX, dispatching complete.");
-			// dispatch complete
-			gauge = MAX;
-			_streamController.add(new BattleTimerEvent(BattleTimerEvent.COMPLETE, this));
-		}
+		gauge = MAX;
+		_streamController.add(new BattleTimerEvent(BattleTimerEvent.COMPLETE, this));
 	}
+}
 
 	// ((96 * (Speed + 20)) * (255 - ((Battle Speed - 1) * 24))) / 16
 	void onMonsterTick()

@@ -59,15 +59,15 @@ class Character
 	Stream<CharacterEvent> stream;
 
 	Character({int this.speed: 80,
-	          int this.strength: 0,
-	          int this.stamina: 0,
-	          int this.magicBlock: 0,
-	          int this.vigor: 0,
+	          int this.strength: 10,
+	          int this.stamina: 10,
+	          int this.magicBlock: 10,
+	          int this.vigor: 10,
 	          int this.row: ROW_FRONT,
-	          int this.defense: 0,
-	          int this.magicalDefense: 0,
+	          int this.defense: 10,
+	          int this.magicalDefense: 10,
 	          bool this.dead: false,
-	          int this.level: 1})
+	          int this.level: 3})
 	{
 		_controller = new StreamController();
 		stream = _controller.stream.asBroadcastStream();

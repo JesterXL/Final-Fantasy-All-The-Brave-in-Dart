@@ -127,7 +127,7 @@ class BattleTimerBar extends DisplayObjectContainer
 
 		if(flashDirty)
 		{
-			print("state: ${fsm.currentState.name}");
+//			print("state: ${fsm.currentState.name}");
 			flashDirty = false;
 			green.graphics.clear();
 			green.graphics.rectRound(ROUND/2, ROUND/2, ((WIDTH - ROUND) * _percentage), HEIGHT - ROUND, ROUND, ROUND);

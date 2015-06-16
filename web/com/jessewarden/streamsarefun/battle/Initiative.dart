@@ -58,7 +58,6 @@ class Initiative
 				// NOTE: pausing the BattleTimer, not the Stream listener... lol, streams!
 				matched.battleTimer.pause();
 				Character targetCharacter = matched.character;
-//				print("character.id: ${targetCharacter.ID}");
 				charactersReady.add(targetCharacter);
 				_streamController.add(new InitiativeEvent(InitiativeEvent.CHARACTER_READY,
 				character: targetCharacter));
@@ -145,14 +144,14 @@ class Initiative
 		});
 	}
 
-	void pause()
+void pause()
+{
+	_battleTimers.forEach((TimerCharacterMap object)
 	{
-		_battleTimers.forEach((TimerCharacterMap object)
-		{
-			BattleTimer timer = object.battleTimer;
-			timer.pause();
-		});
-	}
+		BattleTimer timer = object.battleTimer;
+		timer.pause();
+	});
+}
 
 	void start()
 	{

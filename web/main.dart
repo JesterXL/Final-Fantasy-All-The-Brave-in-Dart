@@ -4,6 +4,8 @@ import 'dart:async';
 import 'dart:math';
 import 'package:stagexl/stagexl.dart';
 import 'package:observe/observe.dart';
+import 'package:frappe/frappe.dart';
+
 import 'com/jessewarden/streamsarefun/core/streamscore.dart';
 import 'com/jessewarden/streamsarefun/battle/battlecore.dart';
 import 'com/jessewarden/streamsarefun/components/components.dart';
@@ -36,7 +38,12 @@ void main()
 //	testInitiative();
 //	testMath();
 //	testWarriorSprite();
-	testCharacterList();
+//	testCharacterList();
+//testingMerge();
+//	test();
+
+	testBattleController();
+
 }
 
 
@@ -291,7 +298,7 @@ void testCharacterList()
 	ObservableList<Monster> monsters = new ObservableList<Monster>();
 	monsters.add(new Monster(Monster.GOBLIN));
 	monsters.add(new Monster(Monster.GOBLIN));
-	monsters.add(new Monster(Monster.SILVER_LOBO));
+	monsters.add(new Monster(Monster.GOBLIN));
 
 	Initiative initiative = new Initiative(loop.stream, players, monsters);
 	initiative.stream.where((event)
@@ -301,7 +308,26 @@ void testCharacterList()
 	})
 	.listen((event)
 	{
-		print("character ready: ${event.character}");
+		//print("character ready: ${event.character}");
+		ObservableList<MenuItem> items = new ObservableList<MenuItem>();
+		items.add(new MenuItem("Fight"));
+		items.add(new MenuItem("Magic"));
+		items.add(new MenuItem("Item"));
+
+		Menu menu = new Menu(300, 280, items);
+		stage.addChild(menu);
+		menu.x = 20;
+		menu.y = 20;
+
+		menu.stream
+		.where((String item)
+		{
+			return item == 'Fight';
+		})
+		.listen((_)
+		{
+
+		});
 	});
 
 //	MonsterList monsterList = new MonsterList(initiative: initiative,
@@ -386,4 +412,24 @@ void testCharacterList()
 
 		renderLoop.juggler.addGroup([tween, topTintTween, bottomTintTween]);
 	});
+}
+
+void testBattleController()
+{
+	GameLoop loop = new GameLoop();
+	loop.start();
+
+	ObservableList<Player> players = new ObservableList<Player>();
+	players.add(new Player(Player.WARRIOR));
+	players.add(new Player(Player.BLACK_MAGE));
+	players.add(new Player(Player.THIEF));
+
+	ObservableList<Monster> monsters = new ObservableList<Monster>();
+	monsters.add(new Monster(Monster.GOBLIN));
+	monsters.add(new Monster(Monster.GOBLIN));
+	monsters.add(new Monster(Monster.GOBLIN));
+
+	Initiative initiative = new Initiative(loop.stream, players, monsters);
+	BattleController battleController = new BattleController(initiative);
+
 }
