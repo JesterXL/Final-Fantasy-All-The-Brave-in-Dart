@@ -75,6 +75,24 @@ void main() {
 			var result = BattleUtils.getCharacterDamageStep2(damage: 1, equippedWithAtlasArmlet: true);
 			expect(result, equals(1.25));
 		});
+
+		test("getMagicalMultipleTargetsAttack 0", ()
+		{
+			var result = BattleUtils.getMagicalMultipleTargetsAttack(0);
+			expect(result, equals(0));
+		});
+
+		test("getMagicalMultipleTargetsAttack 1", ()
+		{
+			var result = BattleUtils.getMagicalMultipleTargetsAttack(1);
+			expect(result, equals(0.5));
+		});
+
+		test("getMagicalMultipleTargetsAttack 100", ()
+		{
+			var result = BattleUtils.getMagicalMultipleTargetsAttack(100);
+			expect(result, equals(50));
+		});
 	});
 }
 
