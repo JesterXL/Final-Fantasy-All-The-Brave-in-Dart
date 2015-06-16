@@ -63,16 +63,16 @@ class BattleUtils
 		return level * level * (battlePower * 4 + strength) / 256;
 	}
 
-	static num getCharacterDamageStep2(num damage,
-	                                   bool isMagicalAttacker,
-	                                   bool isPhysicalAttack,
-	                                   bool isMagicalAttack,
-	                                   bool equippedWithAtlasArmlet,
-	                                   bool equippedWith1HeroRing,
-	                                   bool equippedWith2HeroRings,
-	                                   bool equippedWith1Earring,
-	                                   bool equippedWith2Earrings
-	                                   )
+	static num getCharacterDamageStep2({num damage: 0,
+	                                   bool isMagicalAttacker: false,
+	                                   bool isPhysicalAttack: true,
+	                                   bool isMagicalAttack: false,
+	                                   bool equippedWithAtlasArmlet: false,
+	                                   bool equippedWith1HeroRing: false,
+	                                   bool equippedWith2HeroRings: false,
+	                                   bool equippedWith1Earring: false,
+	                                   bool equippedWith2Earrings: false
+	                                   })
 	{
 		if(isPhysicalAttack && (equippedWithAtlasArmlet || equippedWith1HeroRing))
 		{

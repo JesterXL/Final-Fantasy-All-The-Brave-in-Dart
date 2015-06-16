@@ -51,10 +51,29 @@ void main() {
 
 		test("getMonsterPhysicalDamageStep1", ()
 		{
+			// basic Leafer stats
 //			var str = BattleUtils.getRandomMonsterStrength();
 			var str = 56;
 			var result = BattleUtils.getMonsterPhysicalDamageStep1(level: 10, battlePower: 9, strength: str);
 			expect(result, equals(35.9375));
+		});
+
+		test("getCharacterDamageStep2 defaults", ()
+		{
+			var result = BattleUtils.getCharacterDamageStep2();
+			expect(result, equals(0));
+		});
+
+		test("getCharacterDamageStep2 with 1", ()
+		{
+			var result = BattleUtils.getCharacterDamageStep2(damage: 1);
+			expect(result, equals(1));
+		});
+
+		test("getCharacterDamageStep2 with Atlas Armlet", ()
+		{
+			var result = BattleUtils.getCharacterDamageStep2(damage: 1, equippedWithAtlasArmlet: true);
+			expect(result, equals(1.25));
 		});
 	});
 }
