@@ -104,8 +104,8 @@ class BattleUtils
 
 	static bool getCriticalHit()
 	{
-		int digit = new Random().nextInt(31);
-		return digit == 31;
+		Random digit = new Random();
+		return digit.nextInt(31) == 31;
 	}
 
 	static num getDamageMultipliers(num damage,

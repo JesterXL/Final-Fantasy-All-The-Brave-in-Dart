@@ -93,6 +93,24 @@ void main() {
 			var result = BattleUtils.getMagicalMultipleTargetsAttack(100);
 			expect(result, equals(50));
 		});
+
+		test("getAttackerBackRowFightCommand 0", ()
+		{
+			var result = BattleUtils.getAttackerBackRowFightCommand(0);
+			expect(result, equals(0));
+		});
+
+		test("getAttackerBackRowFightCommand 1", ()
+		{
+			var result = BattleUtils.getAttackerBackRowFightCommand(1);
+			expect(result, equals(0.5));
+		});
+
+		test("getAttackerBackRowFightCommand 100", ()
+		{
+			var result = BattleUtils.getAttackerBackRowFightCommand(100);
+			expect(result, equals(50));
+		});
 	});
 }
 
