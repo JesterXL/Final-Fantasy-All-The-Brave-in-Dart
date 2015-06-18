@@ -134,21 +134,26 @@ class BattleUtils
 		return damage;
 	}
 
-	static num getDamageModifications(num damage,
-	                                  num defense,
-	                                  num magicalDefense,
-	                                  bool isPhysicalAttack,
-	                                  bool isMagicalAttack,
-	                                  bool targetHasSafeStatus,
-	                                  bool targetHasShellStatus,
-	                                  bool targetDefending,
-	                                  bool targetIsInBackRow,
-	                                  bool targetHasMorphStatus,
-	                                  bool targetIsSelf,
-	                                  bool targetIsCharacter,
-	                                  bool attackerIsCharacter)
+	static num getDamageModificationsVariance()
 	{
-		num variance = getRandomNumberFromRange(224, 255);
+		return getRandomNumberFromRange(224, 255);
+	}
+
+	static num getDamageModifications({num damage: 0,
+	                                  num defense: 0,
+	                                  num magicalDefense: 0,
+									  num variance: 224,
+	                                  bool isPhysicalAttack: true,
+	                                  bool isMagicalAttack: false,
+	                                  bool targetHasSafeStatus: false,
+	                                  bool targetHasShellStatus: false,
+	                                  bool targetDefending: false,
+	                                  bool targetIsInBackRow: false,
+	                                  bool targetHasMorphStatus: false,
+	                                  bool targetIsSelf: false,
+	                                  bool targetIsCharacter: false,
+	                                  bool attackerIsCharacter: true})
+	{
 
 		num defenseToUse = 1;
 		if(isPhysicalAttack)
@@ -195,17 +200,17 @@ class BattleUtils
 		return damage;
 	}
 
-	static num getDamageMultiplierStep7(num damage,
-	                                    bool hittingTargetsBack,
-	                                    bool isPhysicalAttack)
+	static num getDamageMultiplierStep7({num damage: 0,
+	                                    bool hittingTargetsBack: false,
+	                                    bool isPhysicalAttack: true})
 	{
 		num multiplier = 1;
 		if(isPhysicalAttack && hittingTargetsBack)
 		{
-			multiplier++;
+			multiplier += 1;
 		}
 
-		damage += ((damage / 2) * damage * multiplier);
+		damage += ((damage / 2) * multiplier);
 		return damage;
 	}
 

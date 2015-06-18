@@ -144,6 +144,47 @@ void main() {
 			});
 		});
 
+		group("getDamageModifications", ()
+		{
+			test("defaults", ()
+			{
+				expect(BattleUtils.getDamageModifications(damage: 72), equals(136));
+			});
+
+			test("physical safe", ()
+			{
+				expect(BattleUtils.getDamageModifications(damage: 72, targetHasSafeStatus: true), equals(91.3125));
+			});
+
+			test("magic", ()
+			{
+				expect(BattleUtils.getDamageModifications(damage: 72, isPhysicalAttack: false, isMagicalAttack: true), equals(136));
+			});
+
+			test("magic shell", ()
+			{
+				expect(BattleUtils.getDamageModifications(damage: 72,
+				isPhysicalAttack: false,
+				isMagicalAttack: true,
+				targetHasShellStatus: true), equals(91.3125));
+			});
+
+			// TODO: mooaaar tests
+		});
+
+		group("getDamageMultiplierStep7", ()
+		{
+			test("defaults", ()
+			{
+				expect(BattleUtils.getDamageMultiplierStep7(damage: 72), equals(108));
+			});
+
+			test("back attack adds damage", ()
+			{
+				expect(BattleUtils.getDamageMultiplierStep7(damage: 72, hittingTargetsBack: true), equals(144));
+			});
+		});
+
 	});
 }
 
