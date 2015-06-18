@@ -19,6 +19,5 @@ part 'InitiativeEvent.dart';
 part 'BattleController.dart';
 part 'BattleControllerEvent.dart';
 part 'TargetHitResult.dart';
-part 'Attack.dart';
 part 'BattleUtils.dart';
 part 'HitResult.dart';

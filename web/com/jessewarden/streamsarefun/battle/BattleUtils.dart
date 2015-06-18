@@ -214,7 +214,7 @@ class BattleUtils
 		return damage;
 	}
 
-	static num getDamageStep8(num damage, bool targetHasPetrifyStatus)
+	static num getDamageStep8({num damage: 0, bool targetHasPetrifyStatus: false})
 	{
 		if(targetHasPetrifyStatus)
 		{
@@ -223,17 +223,14 @@ class BattleUtils
 		return damage;
 	}
 
-	static num getDamageStep9(num damage, {
+	static num getDamageStep9({num damage: 0,
 	bool elementHasBeenNullified: false,
 	bool targetAbsorbsElement: false,
 	bool targetIsImmuneToElement: false,
 	bool targetIsResistantToElement: false,
-	bool targetIsWeakToElement: false,
-	bool attackCanBeBlockedByStamina: false
+	bool targetIsWeakToElement: false
 	})
 	{
-		// TODO: re-read article, I can't remember if it was pass through,
-		// or immediate returning on each flag.
 		if(elementHasBeenNullified)
 		{
 			return 0;
@@ -264,25 +261,42 @@ class BattleUtils
 		return damage;
 	}
 
-	static HitResult getHit(Attack attack)
+	static int getRandomHitOrMissValue()
 	{
-		bool isPhysicalAttack = attack.isPhysicalAttack;
-		bool isMagicalAttack = attack.isMagicalAttack;
-		bool targetHasClearStatus = attack.targetHasClearStatus;
-		bool protectedFromWound = attack.protectedFromWound;
-		bool attackMissesDeathProtectedTargets = attack.attackMissesDeathProtectedTargets;
-		bool spellUnblockable = attack.spellUnblockable;
-		bool targetHasSleepStatus = attack.targetHasSleepStatus;
-		bool targetHasPetrifyStatus = attack.targetHasPetrifyStatus;
-		bool targetHasFreezeStatus = attack.targetHasFreezeStatus;
-		bool targetHasStopStatus = attack.targetHasStopStatus;
-		bool backOfTarget = attack.backOfTarget;
-		num hitRate = attack.hitRate;
-		bool targetHasImageStatus = attack.targetHasImageStatus;
-		num magicBlock = attack.magicBlock;
-		AttackType specialAttackType = attack.specialAttackType;
-		num targetStamina = attack.targetStamina;
+		return getRandomNumberFromRange(0, 99);
+	}
 
+	static int getRandomStaminaHitOrMissValue()
+	{
+		return getRandomNumberFromRange(0, 127);
+	}
+
+	static int getRandomImageStatusRemoval()
+	{
+		return getRandomNumberFromRange(0, 3);
+	}
+
+	static HitResult getHit({int randomHitOrMissValue: 0,
+	int randomStaminaHitOrMissValue: 0,
+	int randomImageStatusRemovalValue: 0,
+	bool isPhysicalAttack: true,
+	bool isMagicalAttack: false,
+	bool targetHasClearStatus: false,
+	bool protectedFromWound: false,
+	bool attackMissesDeathProtectedTargets: false,
+	bool attackCanBeBlockedByStamina: true,
+	bool spellUnblockable: false,
+	bool targetHasSleepStatus: false,
+	bool targetHasPetrifyStatus: false,
+	bool targetHasFreezeStatus: false,
+	bool targetHasStopStatus: false,
+	bool backOfTarget: false,
+	bool targetHasImageStatus: false,
+	int hitRate: 180,  // TODO: need weapon's info, this is where hitRate comes from
+	int magicBlock: 0,
+	int targetStamina: null,
+	AttackType specialAttackType: null})
+	{
 		if(isPhysicalAttack && targetHasClearStatus)
 		{
 			return new HitResult(false);
@@ -323,11 +337,11 @@ class BattleUtils
 			if(isPhysicalAttack && targetHasImageStatus)
 			{
 				// TODO: 1 in 4 chance of removing Image status
-				num result = getRandomNumberFromRange(0, 3);
+				num result = randomImageStatusRemovalValue;
 				if(result == 0)
 				{
 					// this'll remove Image status
-					return new HitResult(false);
+					return new HitResult(false, removeImageStatus: true);
 				}
 				else
 				{
@@ -341,7 +355,7 @@ class BattleUtils
 			blockValue = blockValue.clamp(1, 255);
 //			num blockValue = ((255 - magicBlock * 2).floor() + 1).clamp(1, 255);
 
-			if((hitRate * blockValue / 256) > getRandomNumberFromRange(0, 99))
+			if((hitRate * blockValue / 256) > randomHitOrMissValue)
 			{
 				return new HitResult(true);
 			}
@@ -353,9 +367,9 @@ class BattleUtils
 
 		num blockValue = ((255 - magicBlock * 2) + 1).floor().clamp(1, 255);
 
-		if( ((hitRate * blockValue) / 256) > getRandomNumberFromRange(0, 99))
+		if( ((hitRate * blockValue) / 256) > randomHitOrMissValue)
 		{
-			if(targetStamina >= getRandomNumberFromRange(0, 127))
+			if(targetStamina >= randomStaminaHitOrMissValue)
 			{
 				return new HitResult(false);
 			}

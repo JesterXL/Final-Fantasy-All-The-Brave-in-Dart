@@ -185,6 +185,61 @@ void main() {
 			});
 		});
 
+		group("getDamageStep8", ()
+		{
+			test("defaults", ()
+			{
+				expect(BattleUtils.getDamageStep8(damage: 72), equals(72));
+			});
+
+			test("stoned results in 0 damage", ()
+			{
+				expect(BattleUtils.getDamageStep8(damage: 72, targetHasPetrifyStatus: true), equals(0));
+			});
+		});
+
+		group("getDamageStep9", ()
+		{
+			test("defaults", ()
+			{
+				expect(BattleUtils.getDamageStep9(damage: 72), equals(72));
+			});
+
+			test("force field", ()
+			{
+				expect(BattleUtils.getDamageStep9(damage: 72, elementHasBeenNullified: true), equals(0));
+			});
+
+			test("immune to element heals", ()
+			{
+				expect(BattleUtils.getDamageStep9(damage: 72, targetAbsorbsElement: true), equals(-72));
+			});
+		});
+
+		group("getHit", ()
+		{
+			test("defaults", ()
+			{
+				HitResult result = BattleUtils.getHit(
+					randomHitOrMissValue: 99,
+					randomStaminaHitOrMissValue: 127,
+					randomImageStatusRemovalValue: 3);
+				expect(hitResultIstrue(result), isTrue);
+				expect(hitResultImageStatusWasNotRemoved(result), isTrue);
+			});
+
+			test("remove image status", ()
+			{
+				HitResult result = BattleUtils.getHit(
+					randomHitOrMissValue: 99,
+					randomStaminaHitOrMissValue: 127,
+					targetHasImageStatus: true,
+					randomImageStatusRemovalValue: 0);
+				expect(hitResultIstrue(result), isFalse);
+				expect(hitResultImageStatusWasRemoved(result), isTrue);
+			});
+		});
+
 	});
 }
 
@@ -193,7 +248,20 @@ bool withinRange(num value, num start, num end)
 	return value >= start && value <= end;
 }
 
+bool hitResultIstrue(HitResult result)
+{
+	return result.hit;
+}
 
+bool hitResultImageStatusWasNotRemoved(HitResult result)
+{
+	return result.removeImageStatus == false;
+}
+
+bool hitResultImageStatusWasRemoved(HitResult result)
+{
+	return result.removeImageStatus == true;
+}
 
 //
 //const Matcher withinRange = const _withinRange();
