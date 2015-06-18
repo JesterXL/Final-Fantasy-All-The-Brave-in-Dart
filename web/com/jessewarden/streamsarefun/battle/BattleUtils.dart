@@ -108,10 +108,10 @@ class BattleUtils
 		return digit.nextInt(31) == 31;
 	}
 
-	static num getDamageMultipliers(num damage,
-	                                bool hasMorphStatus,
-	                                bool hasBerserkStatus,
-	                                bool isCriticalHit)
+	static num getDamageMultipliers({num damage: 0,
+	                                bool hasMorphStatus: false,
+	                                bool hasBerserkStatusAndPhysicalAttack: false,
+	                                bool isCriticalHit: false})
 	{
 		num multiplier = 1;
 
@@ -120,7 +120,7 @@ class BattleUtils
 			multiplier += 2;
 		}
 
-		if(hasBerserkStatus)
+		if(hasBerserkStatusAndPhysicalAttack)
 		{
 			multiplier += 1;
 		}
@@ -130,7 +130,7 @@ class BattleUtils
 			multiplier += 2;
 		}
 
-		damage += ((damage / 2) * damage * multiplier);
+		damage += ((damage / 2) * multiplier);
 		return damage;
 	}
 

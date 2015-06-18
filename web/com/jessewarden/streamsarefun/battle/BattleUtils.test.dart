@@ -111,6 +111,39 @@ void main() {
 			var result = BattleUtils.getAttackerBackRowFightCommand(100);
 			expect(result, equals(50));
 		});
+
+		group("getDamageMultipliers", ()
+		{
+			test("defaults", ()
+			{
+				expect(BattleUtils.getDamageMultipliers(damage: 72), equals(108));
+			});
+
+			test("hasMorphStatus", ()
+			{
+				expect(BattleUtils.getDamageMultipliers(damage: 72, hasMorphStatus: true), equals(180));
+			});
+
+			test("hasBerserkStatusAndPhysicalAttack", ()
+			{
+				expect(BattleUtils.getDamageMultipliers(damage: 72, hasBerserkStatusAndPhysicalAttack: true), equals(144));
+			});
+
+			test("isCriticalHit", ()
+			{
+				expect(BattleUtils.getDamageMultipliers(damage: 72, isCriticalHit: true), equals(180));
+			});
+
+			test("all", ()
+			{
+				expect(BattleUtils.getDamageMultipliers(damage: 72,
+														hasMorphStatus: true,
+														hasBerserkStatusAndPhysicalAttack: true,
+														isCriticalHit: true),
+				equals(288));
+			});
+		});
+
 	});
 }
 
