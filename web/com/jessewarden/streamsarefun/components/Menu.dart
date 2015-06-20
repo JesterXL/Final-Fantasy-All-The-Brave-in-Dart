@@ -59,8 +59,8 @@ class Menu extends DisplayObjectContainer
 		})
 		.listen((MouseEvent event)
 		{
-			Object data = event.target.userData;
-			_controller.add(data["data"]);
+			Sprite sprite = event.target;
+			_controller.add(sprite.name);
 		});
 
 		_controller = new StreamController();
@@ -111,7 +111,8 @@ class Menu extends DisplayObjectContainer
 				}
 				else
 				{
-					throw new Error("omg, border, we've got a Dodson here!");
+					print("omg, border, we've got a Dodson here!");
+					throw new Error();
 				}
 			}
 		}
@@ -162,7 +163,7 @@ class Menu extends DisplayObjectContainer
 			hitArea.alpha = 0.0;
 			hitArea.x = field.x;
 			hitArea.y = field.y + field.height - hitArea.height;
-			hitArea.userData = {"type": "hitArea", "data": item.name};
+			hitArea.name = item.name;
 			hitAreas.add(hitArea);
 //			hitArea.onMouseClick.listen((MouseEvent event)
 //			{

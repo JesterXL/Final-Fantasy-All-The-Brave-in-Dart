@@ -9,6 +9,6 @@ class Monster extends Character
 
 	Monster(String this.monsterType)
 	{
-
+		strength = BattleUtils.getRandomMonsterStrength();
 	}
 }

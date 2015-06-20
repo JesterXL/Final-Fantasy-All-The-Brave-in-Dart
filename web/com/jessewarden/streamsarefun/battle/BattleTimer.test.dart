@@ -21,7 +21,7 @@ void main() {
 		test("BattleTimer runs and generates a percentage", () async
 		{
 			GameLoop gameLoop = new GameLoop();
-			BattleTimer timer = new BattleTimer(gameLoop.stream, BattleTimer.MODE_CHARACTER);
+			BattleTimer timer = new BattleTimer(gameLoop.stream, BattleTimer.MODE_PLAYER);
 			gameLoop.start();
 			timer.start();
 			await timer.stream
@@ -39,13 +39,13 @@ void main() {
 
 		test("Default BattleTimer progress is 0", ()
 		{
-			BattleTimer timer = new BattleTimer(new GameLoop().stream, BattleTimer.MODE_CHARACTER);
+			BattleTimer timer = new BattleTimer(new GameLoop().stream, BattleTimer.MODE_PLAYER);
 			expect(timer.progress, equals(0));
 		});
 
 		test("constructed character mode matches character", ()
 		{
-			expect(new BattleTimer(new GameLoop().stream, BattleTimer.MODE_CHARACTER).mode, equals(BattleTimer.MODE_CHARACTER));
+			expect(new BattleTimer(new GameLoop().stream, BattleTimer.MODE_PLAYER).mode, equals(BattleTimer.MODE_PLAYER));
 		});
 
 		test("constructed monster mode matches monster", ()
@@ -55,25 +55,25 @@ void main() {
 
 		test("timer enabled by deafult", ()
 		{
-			expect(new BattleTimer(new GameLoop().stream, BattleTimer.MODE_CHARACTER).enabled, isTrue);
+			expect(new BattleTimer(new GameLoop().stream, BattleTimer.MODE_PLAYER).enabled, isTrue);
 		});
 
 		test("timer running false by default", ()
 		{
-			BattleTimer timer = new BattleTimer(new GameLoop().stream, BattleTimer.MODE_CHARACTER);
+			BattleTimer timer = new BattleTimer(new GameLoop().stream, BattleTimer.MODE_PLAYER);
 			expect(timer.running, isFalse);
 		});
 
 		test("timer running true when started", ()
 		{
-			BattleTimer timer = new BattleTimer(new GameLoop().stream, BattleTimer.MODE_CHARACTER);
+			BattleTimer timer = new BattleTimer(new GameLoop().stream, BattleTimer.MODE_PLAYER);
 			timer.start();
 			expect(timer.running, isTrue);
 		});
 
 		test("timer stops running when you disable it", ()
 		{
-			BattleTimer timer = new BattleTimer(new GameLoop().stream, BattleTimer.MODE_CHARACTER);
+			BattleTimer timer = new BattleTimer(new GameLoop().stream, BattleTimer.MODE_PLAYER);
 			timer.start();
 			timer.enabled = false;
 			expect(timer.running, isFalse);

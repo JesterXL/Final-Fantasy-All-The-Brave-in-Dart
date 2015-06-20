@@ -9,12 +9,12 @@ class CharacterEvent
 
 	String type;
 	Character target;
-	String oldBattleState;
-	String newBattleState;
+	BattleState oldBattleState;
+	BattleState newBattleState;
 	int changeAmount;
 
 	CharacterEvent({String this.type,
 	               Character this.target,
-	               String this.oldBattleState,
-	               String this.newBattleState}){}
+	               BattleState this.oldBattleState,
+	               BattleState this.newBattleState}){}
 }

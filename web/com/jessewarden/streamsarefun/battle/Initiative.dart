@@ -32,7 +32,7 @@ class Initiative
 			// listen for new changes
 			list.listChanges.listen((List<ListChangeRecord> records)
 			{
-				addOrRemoveBattleTimerForCharacter(records, list);
+				addOrremoveBattleTimerForPlayer(records, list);
 			});
 
 			// configure the participants in the battle we have now
@@ -59,8 +59,16 @@ class Initiative
 				matched.battleTimer.pause();
 				Character targetCharacter = matched.character;
 				charactersReady.add(targetCharacter);
-				_streamController.add(new InitiativeEvent(InitiativeEvent.CHARACTER_READY,
-				character: targetCharacter));
+				if(targetCharacter is Player)
+				{
+					_streamController.add(new InitiativeEvent(InitiativeEvent.PLAYER_READY,
+					character: targetCharacter));
+				}
+				else
+				{
+					_streamController.add(new InitiativeEvent(InitiativeEvent.MONSTER_READY,
+					character: targetCharacter));
+				}
 			}
 			else if(event.type == BattleTimerEvent.PROGRESS)
 			{
@@ -69,25 +77,38 @@ class Initiative
 			}
 		});
 		timer.speed = character.speed;
-		if(character is Monster)
-		{
-			character.strength = BattleMath.getRandomMonsterStrength();
-		}
 
-		StreamSubscription<CharacterEvent> characterSubscription = character.stream.listen((CharacterEvent event)
+		if(character is Player)
 		{
-			if(event.type == CharacterEvent.NO_LONGER_SWOON)
+			StreamSubscription<CharacterEvent> characterSubscription = character.stream.listen((CharacterEvent event)
 			{
-				timer.reset();
-			}
+				if(event.type == CharacterEvent.NO_LONGER_SWOON)
+				{
+					timer.reset();
+				}
 
-			if(event.target.hitPoints <= 0)
+				if(event.target.hitPoints <= 0)
+				{
+					timer.pause();
+				}
+			});
+			_battleTimers.add(new TimerCharacterMap(timer, timerSubscription, character, characterSubscription));
+		}
+		else
+		{
+			StreamSubscription<CharacterEvent> characterSubscription = character.stream
+			.where((CharacterEvent event)
+			{
+				return event.type == CharacterEvent.SWOON;
+			})
+			.listen((CharacterEvent event)
 			{
 				timer.pause();
-			}
-		});
+				removeBattleTimerForPlayer(event.target);
+			});
+			_battleTimers.add(new TimerCharacterMap(timer, timerSubscription, character, characterSubscription));
+		}
 
-		_battleTimers.add(new TimerCharacterMap(timer, timerSubscription, character, characterSubscription));
 		timer.start();
 	}
 
@@ -95,7 +116,7 @@ class Initiative
 	{
 		if(character is Player)
 		{
-			return BattleTimer.MODE_CHARACTER;
+			return BattleTimer.MODE_PLAYER;
 		}
 		else
 		{
@@ -103,7 +124,7 @@ class Initiative
 		}
 	}
 
-	void removeBattleTimerForCharacter(Character character)
+	void removeBattleTimerForPlayer(Character character)
 	{
 		TimerCharacterMap object = _battleTimers.firstWhere((object)
 		{
@@ -115,7 +136,7 @@ class Initiative
 		_battleTimers.remove(object);
 	}
 
-	void addOrRemoveBattleTimerForCharacter(List<ListChangeRecord> records, ObservableList<Character> list)
+	void addOrremoveBattleTimerForPlayer(List<ListChangeRecord> records, ObservableList<Character> list)
 	{
 		// data: [#<ListChangeRecord index: 0, removed: [], addedCount: 2>]
 		records.forEach((ListChangeRecord record)

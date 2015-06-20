@@ -4,7 +4,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:stagexl/stagexl.dart';
 import 'package:observe/observe.dart';
-import 'package:frappe/frappe.dart';
+//import 'package:frappe/frappe.dart';
 
 import 'com/jessewarden/streamsarefun/core/streamscore.dart';
 import 'com/jessewarden/streamsarefun/battle/battlecore.dart';
@@ -67,7 +67,7 @@ void testGameLoop()
 void testBattleTimer()
 {
 	GameLoop gameLoop = new GameLoop();
-	BattleTimer timer = new BattleTimer(gameLoop.stream, BattleTimer.MODE_CHARACTER);
+	BattleTimer timer = new BattleTimer(gameLoop.stream, BattleTimer.MODE_PLAYER);
 	gameLoop.start();
 	timer.start();
 	timer.stream
@@ -128,7 +128,7 @@ void testBattleTimerBar()
 	bar.y = 20;
 
 	GameLoop gameLoop = new GameLoop();
-	BattleTimer timer = new BattleTimer(gameLoop.stream, BattleTimer.MODE_CHARACTER);
+	BattleTimer timer = new BattleTimer(gameLoop.stream, BattleTimer.MODE_PLAYER);
 	gameLoop.start();
 	timer.start();
 	timer.stream
@@ -160,7 +160,7 @@ void testInitiative()
 	Initiative initiative = new Initiative(loop.stream, players, monsters);
 	initiative.stream.listen((event)
 	{
-		if(event.type == InitiativeEvent.CHARACTER_READY)
+		if(event.type == InitiativeEvent.PLAYER_READY)
 		{
 			print("character: ${event.character}");
 		}
@@ -304,7 +304,7 @@ void testCharacterList()
 	initiative.stream.where((event)
 	{
 		return event is InitiativeEvent &&
-		event.type == InitiativeEvent.CHARACTER_READY;
+		event.type == InitiativeEvent.PLAYER_READY;
 	})
 	.listen((event)
 	{

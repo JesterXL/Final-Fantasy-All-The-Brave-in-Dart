@@ -96,7 +96,7 @@ class CharacterList extends DisplayObjectContainer
 			{
 				if(event.type == CharacterEvent.HIT_POINTS_CHANGED)
 				{
-					hitPointsField.text = event.target.hitPoints.toString();
+					//hitPointsField.text = event.target.hitPoints.toString();
 					int color;
 					if(event.changeAmount < 0)
 					{

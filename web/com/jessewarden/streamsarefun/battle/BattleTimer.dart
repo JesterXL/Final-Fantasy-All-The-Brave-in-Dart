@@ -2,7 +2,7 @@ part of battlecore;
 
 class BattleTimer
 {
-	static const String MODE_CHARACTER = "character";
+	static const String MODE_PLAYER = "player";
 	static const String MODE_MONSTER = "monster";
 
 	static const int EFFECT_NORMAL = 96;
@@ -50,7 +50,7 @@ class BattleTimer
 	void set mode(String newValue)
 	{
 		_mode = newValue;
-		if (_mode == MODE_CHARACTER)
+		if (_mode == MODE_PLAYER)
 		{
 			modeFunction = onCharacterTick;
 		} else
@@ -146,8 +146,7 @@ class BattleTimer
 		}
 
 		lastTick = lastTick + time.round();
-		num result = lastTick / TIME_SLICE;
-		int resultInt = (lastTick / TIME_SLICE).floor();
+		int result = (lastTick / TIME_SLICE).floor();
 		if (result > 0)
 		{
 			num remainder = lastTick - (result * TIME_SLICE);

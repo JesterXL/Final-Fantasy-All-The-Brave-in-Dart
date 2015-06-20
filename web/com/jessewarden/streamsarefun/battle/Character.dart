@@ -19,7 +19,7 @@ class Character
 	int ID = -1;
 	static int INCREMENT = 0;
 
-	String _battleState;
+	BattleState _battleState;
 	int _hitPoints = 0;
 
 	int get hitPoints => _hitPoints;
@@ -43,14 +43,14 @@ class Character
 		}
 	}
 
-	String get battleState => _battleState;
-	void set battleState(String newState)
+	BattleState get battleState => _battleState;
+	void set battleState(BattleState newState)
 	{
 		if(newState == _battleState)
 		{
 			return;
 		}
-		String oldState = _battleState;
+		BattleState oldState = _battleState;
 		_battleState = newState;
 		_controller.add(new CharacterEvent(type: CharacterEvent.BATTLE_STATE_CHANGED, target: this, oldBattleState: oldState, newBattleState: newState));
 	}
