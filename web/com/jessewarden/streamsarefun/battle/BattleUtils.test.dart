@@ -69,42 +69,50 @@ void main() {
 			});
 		});
 
+		group("getDamageStep2", ()
+		{
+			test("defaults", ()
+			{
+				var result = BattleUtils.getDamageStep2();
+				expect(result, equals(0));
+			});
 
-//		test("getCharacterDamageStep2 defaults", ()
-//		{
-//			var result = BattleUtils.getDamageStep2();
-//			expect(result, equals(0));
-//		});
+			test("with 1", ()
+			{
+				var result = BattleUtils.getDamageStep2(damage: 1);
+				expect(result, equals(1));
+			});
+
+			test("with Atlas Armlet", ()
+			{
+				var result = BattleUtils.getDamageStep2(damage: 1, equippedWithAtlasArmlet: true);
+				expect(result, equals(1.25));
+			});
+		});
+
+		group("getDamageStep3", ()
+		{
+
+			test("getDamageStep3 0", ()
+			{
+				var result = BattleUtils.getDamageStep3(damage: 0);
+				expect(result, equals(0));
+			});
+
+			test("getDamageStep3 1", ()
+			{
+				var result = BattleUtils.getDamageStep3(damage: 1, isMagicalAttack: true, attackingMultipleTargets: true);
+				expect(result, equals(0.5));
+			});
+
+			test("getDamageStep3 100", ()
+			{
+				var result = BattleUtils.getDamageStep3(damage: 100, isMagicalAttack: true, attackingMultipleTargets: true);
+				expect(result, equals(50));
+			});
+		});
+
 //
-//		test("getCharacterDamageStep2 with 1", ()
-//		{
-//			var result = BattleUtils.getDamageStep2(damage: 1);
-//			expect(result, equals(1));
-//		});
-//
-//		test("getCharacterDamageStep2 with Atlas Armlet", ()
-//		{
-//			var result = BattleUtils.getDamageStep2(damage: 1, equippedWithAtlasArmlet: true);
-//			expect(result, equals(1.25));
-//		});
-//
-//		test("getDamageStep3 0", ()
-//		{
-//			var result = BattleUtils.getDamageStep3(damage: 0);
-//			expect(result, equals(0));
-//		});
-//
-//		test("getDamageStep3 1", ()
-//		{
-//			var result = BattleUtils.getDamageStep3(damage: 1);
-//			expect(result, equals(0.5));
-//		});
-//
-//		test("getDamageStep3 100", ()
-//		{
-//			var result = BattleUtils.getDamageStep3(damage: 100);
-//			expect(result, equals(50));
-//		});
 //
 //		test("getAttackerBackRowFightCommand 0", ()
 //		{
