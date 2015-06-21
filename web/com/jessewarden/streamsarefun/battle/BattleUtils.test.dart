@@ -16,6 +16,17 @@ void main() {
 			expect(true, isNotNull);
 		});
 
+		test("negate works", ()
+		{
+			Function cowTrue = () => false;
+			expect(cowTrue(), isFalse);
+			bool cowFalse()
+			{
+				return !cowTrue();
+			}
+			expect(cowFalse(), isTrue);
+		});
+
 		test("divide", ()
 		{
 			expect(BattleUtils.divide(2, 1), equals(2));

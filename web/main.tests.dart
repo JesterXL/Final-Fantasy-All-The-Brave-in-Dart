@@ -8,11 +8,11 @@ import 'com/jessewarden/streamsarefun/battle/Character.test.dart' as CharacterTe
 
 void main()
 {
-	WindowMockTest.main();
-	GameLoopTest.main();
-	BattleTimerTest.main();
-	InitiativeTest.main();
+//	WindowMockTest.main();
+//	GameLoopTest.main();
+//	BattleTimerTest.main();
+//	InitiativeTest.main();
 	BattleUtilsTest.main();
 //	BattleControllerTest.main();
-	CharacterTest.main();
+//	CharacterTest.main();
 }

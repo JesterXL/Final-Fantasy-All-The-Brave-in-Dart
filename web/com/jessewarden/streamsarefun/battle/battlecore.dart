@@ -6,6 +6,9 @@ import 'dart:math';
 import '../core/streamscore.dart';
 import 'package:observe/observe.dart';
 import '../enums/enums.dart';
+import '../items/items.dart';
+import '../relics/relics.dart';
+import 'dart:mirrors';
 
 part 'BattleTimer.dart';
 part 'BattleTimerEvent.dart';

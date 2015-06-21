@@ -2,18 +2,73 @@ part of battlecore;
 
 class Character
 {
-	int speed;
-	int strength;
-	int stamina;
-	int magicBlock;
 	int vigor;
+	int speed;
+	int stamina;
+	int magicPower;
+	int evadePercent;
+	int magicBlockPercent;
+
 	int defense;
-	int magicalDefense;
+	int magicDefense;
+	int battlePower;
+
 	bool dead = false;
 	int level = 1;
 
 	int ID = -1;
 	static int INCREMENT = 0;
+
+
+	Item rightHand = null;
+	Item leftHand = null;
+	Item head = null;
+	Item body = null;
+
+	Relic relic1 = null;
+	Relic relic2 = null;
+
+	// TODO: figure out reflection/mirrors
+	bool equippedWithGauntlet()
+	{
+		return relic1 is Gauntlet || relic2 is Gauntlet;
+	}
+
+	bool equippedWithOffering()
+	{
+		return relic1 is Offering || relic2 is Offering;
+	}
+
+	bool genjiGloveEquipped()
+	{
+		return relic1 is GenjiGlove || relic2 is GenjiGlove;
+	}
+
+	bool rightHandHasWeapon() => rightHand != null;
+	bool leftHandHasWeapon() => leftHand != null;
+	bool rightHandHasNoWeapon() => !rightHandHasWeapon();
+	bool leftHandHasNoWeapon() => !rightHandHasWeapon();
+	bool hasZeroWeapons() => rightHandHasNoWeapon() && leftHandHasNoWeapon();
+
+	bool oneOrZeroWeapons()
+	{
+		if(rightHandHasWeapon() && leftHandHasNoWeapon())
+		{
+			return true;
+		}
+		else if(rightHandHasNoWeapon() && leftHandHasWeapon())
+		{
+			return true;
+		}
+		else if(hasZeroWeapons())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 
 	BattleState _battleState;
 	int _hitPoints = 0;

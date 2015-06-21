@@ -277,25 +277,25 @@ class BattleUtils
 	}
 
 	static HitResult getHit({int randomHitOrMissValue: 0,
-	int randomStaminaHitOrMissValue: 0,
-	int randomImageStatusRemovalValue: 0,
-	bool isPhysicalAttack: true,
-	bool isMagicalAttack: false,
-	bool targetHasClearStatus: false,
-	bool protectedFromWound: false,
-	bool attackMissesDeathProtectedTargets: false,
-	bool attackCanBeBlockedByStamina: true,
-	bool spellUnblockable: false,
-	bool targetHasSleepStatus: false,
-	bool targetHasPetrifyStatus: false,
-	bool targetHasFreezeStatus: false,
-	bool targetHasStopStatus: false,
-	bool backOfTarget: false,
-	bool targetHasImageStatus: false,
-	int hitRate: 180,  // TODO: need weapon's info, this is where hitRate comes from
-	int magicBlock: 0,
-	int targetStamina: null,
-	AttackType specialAttackType: null})
+		int randomStaminaHitOrMissValue: 0,
+		int randomImageStatusRemovalValue: 0,
+		bool isPhysicalAttack: true,
+		bool isMagicalAttack: false,
+		bool targetHasClearStatus: false,
+		bool protectedFromWound: false,
+		bool attackMissesDeathProtectedTargets: false,
+		bool attackCanBeBlockedByStamina: true,
+		bool spellUnblockable: false,
+		bool targetHasSleepStatus: false,
+		bool targetHasPetrifyStatus: false,
+		bool targetHasFreezeStatus: false,
+		bool targetHasStopStatus: false,
+		bool backOfTarget: false,
+		bool targetHasImageStatus: false,
+		int hitRate: 180,  // TODO: need weapon's info, this is where hitRate comes from
+		int magicBlock: 0,
+		int targetStamina: null,
+		AttackType specialAttackType: null})
 	{
 		if(isPhysicalAttack && targetHasClearStatus)
 		{
@@ -382,5 +382,148 @@ class BattleUtils
 		{
 			return new HitResult(false);
 		}
+	}
+
+	static bool isStandardFightAttack(bool isPhysicalAttack, bool isMagicalAttack)
+	{
+		return isPhysicalAttack == true && isMagicalAttack == false;
+	}
+
+	static void hitAndApplyDamage(Character attacker,
+	                              {bool isPhysicalAttack: true,
+	                              bool isMagicalAttack: false,
+	                              bool targetHasClearStatus: false,
+	                              bool protectedFromWound: false,
+	                              bool attackMissesDeathProtectedTargets: false,
+	                              bool attackCanBeBlockedByStamina: true,
+	                              bool spellUnblockable: false,
+	                              bool targetHasSleepStatus: false,
+	                              bool targetHasPetrifyStatus: false,
+	                              bool targetHasFreezeStatus: false,
+	                              bool targetHasStopStatus: false,
+	                              bool backOfTarget: false,
+	                              bool targetHasImageStatus: false,
+	                              int hitRate: 180,  // TODO: need weapon's info, this is where hitRate comes from
+	                              int magicBlock: 0,
+	                              int targetStamina: null,
+	                              AttackType specialAttackType: null})
+	{
+		HitResult hitResult = BattleUtils.getHit(
+			randomHitOrMissValue: getRandomHitOrMissValue(),
+			randomStaminaHitOrMissValue: getRandomStaminaHitOrMissValue(),
+			randomImageStatusRemovalValue: getRandomImageStatusRemoval(),
+			isPhysicalAttack: isPhysicalAttack,
+			isMagicalAttack: isMagicalAttack,
+			targetHasClearStatus: targetHasClearStatus,
+			protectedFromWound: protectedFromWound,
+			attackMissesDeathProtectedTargets: attackMissesDeathProtectedTargets,
+			attackCanBeBlockedByStamina: attackCanBeBlockedByStamina,
+			spellUnblockable: spellUnblockable,
+			targetHasSleepStatus: targetHasSleepStatus,
+			targetHasPetrifyStatus: targetHasPetrifyStatus,
+			targetHasFreezeStatus: targetHasFreezeStatus,
+			targetHasStopStatus: targetHasStopStatus,
+			backOfTarget: backOfTarget,
+			targetHasImageStatus: targetHasImageStatus,
+			hitRate: hitRate,
+			magicBlock: magicBlock,
+			targetStamina: targetStamina,
+			specialAttackType: specialAttackType
+		);
+		int damage = 0;
+		bool criticalHit = false;
+		if(hitResult.hit)
+		{
+			int battlePower = 28; // TODO: need weapon info, battle power comes from it/them
+
+			bool equippedWithGauntlet = false; // TODO: is the character?
+			bool equippedWithOffering = false; // TODO: is the character?
+			bool standardFightAttack = isStandardFightAttack(isPhysicalAttack, isMagicalAttack);  // TODO: is the character?
+			bool genjiGloveEquipped = false;  // TODO: is the character?
+			bool oneOrZeroWeapons = true;  // TODO: is the character?
+
+			damage = BattleUtils.getCharacterPhysicalDamageStep1(
+				strength: attacker.vigor,
+				battlePower: attacker.battlePower,
+				level: attacker.level,
+				equippedWithGauntlet: attacker.equippedWithGauntlet(),
+				equippedWithOffering: attacker.equippedWithOffering(),
+				standardFightAttack: standardFightAttack,
+				genjiGloveEquipped: attacker.genjiGloveEquipped(),
+				oneOrZeroWeapons: attacker.oneOrZeroWeapons()
+			);
+
+			bool isMagicalAttacker = false;
+			bool isPhysicalAttack = true;
+			bool isMagicalAttack = false;
+			bool equippedWithAtlasArmlet = false;
+			bool equippedWith1HeroRing = false;
+			bool equippedWith2HeroRings = false;
+			bool equippedWith1Earring = false;
+			bool equippedWith2Earrings = false;
+			damage = BattleUtils.getCharacterDamageStep2(damage,
+			isMagicalAttacker,
+			isPhysicalAttack,
+			isMagicalAttack,
+			equippedWithAtlasArmlet,
+			equippedWith1HeroRing,
+			equippedWith2HeroRings,
+			equippedWith1Earring,
+			equippedWith2Earrings);
+
+			criticalHit = BattleUtils.getCriticalHit();
+
+			bool hasMorphStatus = false;
+			bool hasBerserkStatus = false;
+			damage = BattleUtils.getDamageMultipliers(damage,
+			hasMorphStatus,
+			hasBerserkStatus,
+			criticalHit);
+
+			// TODO: need armor of target so we can calculate defense
+			int defense = attacker.defense; // 16
+			int magicalDefense = attacker.magicalDefense; // 0
+	//			isPhysicalAttack,
+	//			 isMagicalAttack,
+			bool targetHasSafeStatus = false;
+			bool targetHasShellStatus = false;
+			bool targetDefending = false;
+			bool targetIsInBackRow = false;
+			bool targetHasMorphStatus = false;
+			bool targetIsSelf = false;
+			bool targetIsCharacter = false;
+			bool attackerIsCharacter = true;
+
+			damage = BattleUtils.getDamageModifications(damage,
+			defense,
+			magicalDefense,
+			attack.isPhysicalAttack,
+			attack.isMagicalAttack,
+			targetHasSafeStatus,
+			targetHasShellStatus,
+			targetDefending,
+			targetIsInBackRow,
+			targetHasMorphStatus,
+			targetIsSelf,
+			targetIsCharacter,
+			attackerIsCharacter);
+
+			// damage, hittingTargetsBack, isPhysicalAttack)
+			bool hittingTargetsBack = false;
+			damage = BattleUtils.getDamageMultiplierStep7(damage,
+			hittingTargetsBack,
+			attack.isPhysicalAttack);
+			if(damage > 9999)
+			{
+				throw "What, 9000!?!";
+			}
+		}
+
+		targetHitResults.add(new TargetHitResult(criticalHit: criticalHit,
+		hit: hitResult.hit,
+		damage: damage,
+		removeImageStatus: hitResult.removeImageStatus,
+		target: target
+		));
 	}
 }

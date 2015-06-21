@@ -320,13 +320,18 @@ void testCharacterList()
 		menu.y = 20;
 
 		menu.stream
-		.where((String item)
+		.listen((String item)
 		{
-			return item == 'Fight';
-		})
-		.listen((_)
-		{
+			switch(item)
+			{
+				case "Fight":
+					// attack and get hit + damage result
+					// animate
+					// apply damage
+					// animate
+					// unpause battle timer
 
+			}
 		});
 	});
 
