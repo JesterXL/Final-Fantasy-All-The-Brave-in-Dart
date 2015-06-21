@@ -148,7 +148,7 @@ class BattleUtils
 	                                bool hasBerserkStatusAndPhysicalAttack: false,
 	                                bool isCriticalHit: false})
 	{
-		num multiplier = 1;
+		num multiplier = 0;
 
 		if(hasMorphStatus)
 		{
@@ -180,6 +180,7 @@ class BattleUtils
 									  num variance: 224,
 	                                  bool isPhysicalAttack: true,
 	                                  bool isMagicalAttack: false,
+										bool isHealingAttack: false,
 	                                  bool targetHasSafeStatus: false,
 	                                  bool targetHasShellStatus: false,
 	                                  bool targetDefending: false,
@@ -190,17 +191,17 @@ class BattleUtils
 	                                  bool attackerIsCharacter: true})
 	{
 
-		num defenseToUse = 1;
+		damage = (damage * variance / 256) + 1;
+
+		// defense modification
 		if(isPhysicalAttack)
 		{
-			defenseToUse = defense;
+			damage = (damage * (255 - defense) / 256) + 1;
 		}
 		else
 		{
-			defenseToUse = magicalDefense;
+			damage = (damage * (255 - magicalDefense) / 256) + 1;
 		}
-
-		damage += (damage * variance / 256) + 1;
 
 		// safe / shell
 		if((isPhysicalAttack && targetHasSafeStatus) || (isMagicalAttack && targetHasShellStatus))
@@ -227,9 +228,12 @@ class BattleUtils
 		}
 
 		// self damage (healing attack skips this step)
-		if(targetIsSelf && targetIsCharacter && attackerIsCharacter)
+		if(isHealingAttack == false)
 		{
-			damage /= 2;
+			if (targetIsSelf && targetIsCharacter && attackerIsCharacter)
+			{
+				damage /= 2;
+			}
 		}
 
 		return damage;
@@ -239,7 +243,7 @@ class BattleUtils
 	                                    bool hittingTargetsBack: false,
 	                                    bool isPhysicalAttack: true})
 	{
-		num multiplier = 1;
+		num multiplier = 0;
 		if(isPhysicalAttack && hittingTargetsBack)
 		{
 			multiplier += 1;

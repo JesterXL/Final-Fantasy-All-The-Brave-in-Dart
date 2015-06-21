@@ -112,153 +112,152 @@ void main() {
 			});
 		});
 
-//
-//
-//		test("getAttackerBackRowFightCommand 0", ()
-//		{
-//			var result = BattleUtils.getAttackerBackRowFightCommand(0);
-//			expect(result, equals(0));
-//		});
-//
-//		test("getAttackerBackRowFightCommand 1", ()
-//		{
-//			var result = BattleUtils.getAttackerBackRowFightCommand(1);
-//			expect(result, equals(0.5));
-//		});
-//
-//		test("getAttackerBackRowFightCommand 100", ()
-//		{
-//			var result = BattleUtils.getAttackerBackRowFightCommand(100);
-//			expect(result, equals(50));
-//		});
-//
-//		group("getDamageMultipliers", ()
-//		{
-//			test("defaults", ()
-//			{
-//				expect(BattleUtils.getDamageMultipliers(damage: 72), equals(108));
-//			});
-//
-//			test("hasMorphStatus", ()
-//			{
-//				expect(BattleUtils.getDamageMultipliers(damage: 72, hasMorphStatus: true), equals(180));
-//			});
-//
-//			test("hasBerserkStatusAndPhysicalAttack", ()
-//			{
-//				expect(BattleUtils.getDamageMultipliers(damage: 72, hasBerserkStatusAndPhysicalAttack: true), equals(144));
-//			});
-//
-//			test("isCriticalHit", ()
-//			{
-//				expect(BattleUtils.getDamageMultipliers(damage: 72, isCriticalHit: true), equals(180));
-//			});
-//
-//			test("all", ()
-//			{
-//				expect(BattleUtils.getDamageMultipliers(damage: 72,
-//														hasMorphStatus: true,
-//														hasBerserkStatusAndPhysicalAttack: true,
-//														isCriticalHit: true),
-//				equals(288));
-//			});
-//		});
-//
-//		group("getDamageModifications", ()
-//		{
-//			test("defaults", ()
-//			{
-//				expect(BattleUtils.getDamageModifications(damage: 72), equals(136));
-//			});
-//
-//			test("physical safe", ()
-//			{
-//				expect(BattleUtils.getDamageModifications(damage: 72, targetHasSafeStatus: true), equals(91.3125));
-//			});
-//
-//			test("magic", ()
-//			{
-//				expect(BattleUtils.getDamageModifications(damage: 72, isPhysicalAttack: false, isMagicalAttack: true), equals(136));
-//			});
-//
-//			test("magic shell", ()
-//			{
-//				expect(BattleUtils.getDamageModifications(damage: 72,
-//				isPhysicalAttack: false,
-//				isMagicalAttack: true,
-//				targetHasShellStatus: true), equals(91.3125));
-//			});
-//
-//			// TODO: mooaaar tests
-//		});
-//
-//		group("getDamageMultiplierStep7", ()
-//		{
-//			test("defaults", ()
-//			{
-//				expect(BattleUtils.getDamageMultiplierStep7(damage: 72), equals(108));
-//			});
-//
-//			test("back attack adds damage", ()
-//			{
-//				expect(BattleUtils.getDamageMultiplierStep7(damage: 72, hittingTargetsBack: true), equals(144));
-//			});
-//		});
-//
-//		group("getDamageStep8", ()
-//		{
-//			test("defaults", ()
-//			{
-//				expect(BattleUtils.getDamageStep8(damage: 72), equals(72));
-//			});
-//
-//			test("stoned results in 0 damage", ()
-//			{
-//				expect(BattleUtils.getDamageStep8(damage: 72, targetHasPetrifyStatus: true), equals(0));
-//			});
-//		});
-//
-//		group("getDamageStep9", ()
-//		{
-//			test("defaults", ()
-//			{
-//				expect(BattleUtils.getDamageStep9(damage: 72), equals(72));
-//			});
-//
-//			test("force field", ()
-//			{
-//				expect(BattleUtils.getDamageStep9(damage: 72, elementHasBeenNullified: true), equals(0));
-//			});
-//
-//			test("immune to element heals", ()
-//			{
-//				expect(BattleUtils.getDamageStep9(damage: 72, targetAbsorbsElement: true), equals(-72));
-//			});
-//		});
-//
-//		group("getHit", ()
-//		{
-//			test("defaults", ()
-//			{
-//				HitResult result = BattleUtils.getHit(
-//					randomHitOrMissValue: 99,
-//					randomStaminaHitOrMissValue: 127,
-//					randomImageStatusRemovalValue: 3);
-//				expect(hitResultIstrue(result), isTrue);
-//				expect(hitResultImageStatusWasNotRemoved(result), isTrue);
-//			});
-//
-//			test("remove image status", ()
-//			{
-//				HitResult result = BattleUtils.getHit(
-//					randomHitOrMissValue: 99,
-//					randomStaminaHitOrMissValue: 127,
-//					targetHasImageStatus: true,
-//					randomImageStatusRemovalValue: 0);
-//				expect(hitResultIstrue(result), isFalse);
-//				expect(hitResultImageStatusWasRemoved(result), isTrue);
-//			});
-//		});
+		group("getDamageStep4", ()
+		{
+			test("0", ()
+			{
+				var result = BattleUtils.getDamageStep4(damage: 0);
+				expect(result, equals(0));
+			});
+
+			test("1", ()
+			{
+				var result = BattleUtils.getDamageStep4(damage: 1, attackerIsInBackRow: true);
+				expect(result, equals(0.5));
+			});
+
+			test("100", ()
+			{
+				var result = BattleUtils.getDamageStep4(damage: 100, attackerIsInBackRow: true);
+				expect(result, equals(50));
+			});
+		});
+
+		group("getDamageStep5", ()
+		{
+			test("100", ()
+			{
+				var result = BattleUtils.getDamageStep5(
+					damage: 100,
+					hasMorphStatus: false,
+					hasBerserkStatusAndPhysicalAttack: false,
+					isCriticalHit: false
+				);
+				expect(result, equals(100));
+			});
+
+			test("200 from 100 if critical hit", ()
+			{
+				var result = BattleUtils.getDamageStep5(
+					damage: 100,
+					hasMorphStatus: false,
+					hasBerserkStatusAndPhysicalAttack: false,
+					isCriticalHit: true
+				);
+				expect(result, equals(200));
+			});
+		});
+
+		group("getDamageStep6", ()
+		{
+			test("defaults", ()
+			{
+				expect(BattleUtils.getDamageStep6(damage: 72), equals(64.75));
+			});
+
+			test("defense of 1", ()
+			{
+				expect(BattleUtils.getDamageStep6(damage: 72, defense: 1), equals(64.5));
+			});
+
+			test("physical safe", ()
+			{
+				expect(BattleUtils.getDamageStep6(damage: 72, targetHasSafeStatus: true), equals(43.998046875));
+			});
+
+			test("magic", ()
+			{
+				expect(BattleUtils.getDamageStep6(damage: 72, isPhysicalAttack: false, isMagicalAttack: true), equals(64.75));
+			});
+
+			test("magic shell", ()
+			{
+				expect(BattleUtils.getDamageStep6(damage: 72,
+				isPhysicalAttack: false,
+				isMagicalAttack: true,
+				targetHasShellStatus: true), equals(43.998046875));
+			});
+
+			// TODO: mooaaar tests
+		});
+
+		group("getDamageStep7", ()
+		{
+			test("defaults", ()
+			{
+				expect(BattleUtils.getDamageStep7(damage: 72), equals(72));
+			});
+
+			test("back attack adds damage", ()
+			{
+				expect(BattleUtils.getDamageStep7(damage: 72, hittingTargetsBack: true), equals(108));
+			});
+		});
+
+		group("getDamageStep8", ()
+		{
+			test("defaults", ()
+			{
+				expect(BattleUtils.getDamageStep8(damage: 72), equals(72));
+			});
+
+			test("stoned results in 0 damage", ()
+			{
+				expect(BattleUtils.getDamageStep8(damage: 72, targetHasPetrifyStatus: true), equals(0));
+			});
+		});
+
+		group("getDamageStep9", ()
+		{
+			test("defaults", ()
+			{
+				expect(BattleUtils.getDamageStep9(damage: 72), equals(72));
+			});
+
+			test("force field", ()
+			{
+				expect(BattleUtils.getDamageStep9(damage: 72, elementHasBeenNullified: true), equals(0));
+			});
+
+			test("immune to element heals", ()
+			{
+				expect(BattleUtils.getDamageStep9(damage: 72, targetAbsorbsElement: true), equals(-72));
+			});
+		});
+
+		group("getHit", ()
+		{
+			test("defaults", ()
+			{
+				HitResult result = BattleUtils.getHit(
+					randomHitOrMissValue: 99,
+					randomStaminaHitOrMissValue: 127,
+					randomImageStatusRemovalValue: 3);
+				expect(hitResultIstrue(result), isTrue);
+				expect(hitResultImageStatusWasNotRemoved(result), isTrue);
+			});
+
+			test("remove image status", ()
+			{
+				HitResult result = BattleUtils.getHit(
+					randomHitOrMissValue: 99,
+					randomStaminaHitOrMissValue: 127,
+					targetHasImageStatus: true,
+					randomImageStatusRemovalValue: 0);
+				expect(hitResultIstrue(result), isFalse);
+				expect(hitResultImageStatusWasRemoved(result), isTrue);
+			});
+		});
 
 	});
 }
