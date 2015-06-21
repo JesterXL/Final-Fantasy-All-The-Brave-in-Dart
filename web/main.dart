@@ -10,12 +10,13 @@ import 'com/jessewarden/streamsarefun/core/streamscore.dart';
 import 'com/jessewarden/streamsarefun/battle/battlecore.dart';
 import 'com/jessewarden/streamsarefun/components/components.dart';
 import 'com/jessewarden/streamsarefun/sprites/sprites.dart';
+import 'com/jessewarden/streamsarefun/managers/managers.dart';
 
 CanvasElement canvas;
 Stage stage;
 RenderLoop renderLoop;
 ResourceManager resourceManager;
-//CursorFocusManager cursorManager;
+CursorFocusManager cursorManager;
 
 void main()
 {
@@ -29,7 +30,7 @@ void main()
 	renderLoop.addStage(stage);
 
 	resourceManager = new ResourceManager();
-//	cursorManager = new CursorFocusManager(stage, resourceManager);
+	cursorManager = new CursorFocusManager(stage, resourceManager);
 
 	//testGameLoop();
 //  testBattleTimer();
@@ -38,7 +39,8 @@ void main()
 //	testInitiative();
 //	testMath();
 //	testWarriorSprite();
-	testCharacterList();
+//	testCharacterList();
+	testBattleMenu();
 //testingMerge();
 //	test();
 
@@ -417,6 +419,23 @@ void testCharacterList()
 
 		renderLoop.juggler.addGroup([tween, topTintTween, bottomTintTween]);
 	});
+}
+
+void testBattleMenu()
+{
+	resourceManager.addSound("menuBeep", "audio/menu-beep.mp3");
+	CursorFocusManager cursorManager = new CursorFocusManager(stage, resourceManager);
+
+	GameLoop loop = new GameLoop();
+	loop.start();
+
+	BattleMenu battleMenu = new BattleMenu(resourceManager, cursorManager, stage);
+	resourceManager.load()
+	.then((_)
+	{
+		battleMenu.show();
+	});
+
 }
 
 void testBattleController()
