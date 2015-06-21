@@ -4,13 +4,15 @@ import 'com/jessewarden/streamsarefun/battle/BattleTimer.test.dart' as BattleTim
 import 'com/jessewarden/streamsarefun/battle/Initiative.test.dart' as InitiativeTest;
 import 'com/jessewarden/streamsarefun/battle/BattleUtils.test.dart' as BattleUtilsTest;
 import 'com/jessewarden/streamsarefun/battle/BattleController.test.dart' as BattleControllerTest;
+import 'com/jessewarden/streamsarefun/battle/Character.test.dart' as CharacterTest;
 
 void main()
 {
-	WindowMockTest.main();
-	GameLoopTest.main();
-	BattleTimerTest.main();
-	InitiativeTest.main();
-	BattleUtilsTest.main();
-	BattleControllerTest.main();
+//	WindowMockTest.main();
+//	GameLoopTest.main();
+//	BattleTimerTest.main();
+//	InitiativeTest.main();
+//	BattleUtilsTest.main();
+//	BattleControllerTest.main();
+	CharacterTest.main();
 }

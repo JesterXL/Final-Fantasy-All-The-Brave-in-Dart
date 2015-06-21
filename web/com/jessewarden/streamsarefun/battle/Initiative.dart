@@ -3,7 +3,6 @@ part of battlecore;
 class Initiative
 {
 	Stream<GameLoopEvent> _gameLoopStream;
-	Stream<GameLoopEvent> get gameLoopStream => _gameLoopStream;
 	ObservableList<Player> _players;
 	ObservableList<Monster> _monsters;
 	List<TimerCharacterMap> _battleTimers = new List<TimerCharacterMap>();

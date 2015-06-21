@@ -2,15 +2,11 @@ part of battlecore;
 
 class Character
 {
-	static const int ROW_FRONT = 0;
-	static const int ROW_BACK = 1;
-
 	int speed;
 	int strength;
 	int stamina;
 	int magicBlock;
 	int vigor;
-	int row = ROW_FRONT;
 	int defense;
 	int magicalDefense;
 	bool dead = false;
@@ -52,7 +48,28 @@ class Character
 		}
 		BattleState oldState = _battleState;
 		_battleState = newState;
-		_controller.add(new CharacterEvent(type: CharacterEvent.BATTLE_STATE_CHANGED, target: this, oldBattleState: oldState, newBattleState: newState));
+		_controller.add(new CharacterEvent(
+			type: CharacterEvent.BATTLE_STATE_CHANGED,
+			target: this,
+			oldBattleState: oldState,
+			newBattleState: newState));
+	}
+
+	Row _row = Row.FRONT;
+	Row get row => _row;
+	void set row(Row newRow)
+	{
+		if(newRow == _row)
+		{
+			return;
+		}
+		Row oldRow = _row;
+		_row = newRow;
+		_controller.add(new CharacterEvent(
+			type: CharacterEvent.ROW_CHANGED,
+			target: this,
+			oldRow: oldRow,
+			newRow: newRow));
 	}
 
 	StreamController<CharacterEvent> _controller;
@@ -63,12 +80,16 @@ class Character
 	          int this.stamina: 10,
 	          int this.magicBlock: 10,
 	          int this.vigor: 10,
-	          int this.row: ROW_FRONT,
+				Row row: Row.FRONT,
+				int hitPoints: 0,
 	          int this.defense: 10,
 	          int this.magicalDefense: 10,
 	          bool this.dead: false,
 	          int this.level: 3})
 	{
+		_row = row;
+		_hitPoints = hitPoints;
+
 		_controller = new StreamController();
 		stream = _controller.stream.asBroadcastStream();
 		ID = INCREMENT++;
@@ -76,13 +97,13 @@ class Character
 
 	void toggleRow()
 	{
-		if(row == Character.ROW_FRONT)
+		if(row == Row.FRONT)
 		{
-			row = Character.ROW_BACK;
+			row = Row.BACK;
 		}
 		else
 		{
-			row = Character.ROW_FRONT;
+			row = Row.FRONT;
 		}
 	}
 
