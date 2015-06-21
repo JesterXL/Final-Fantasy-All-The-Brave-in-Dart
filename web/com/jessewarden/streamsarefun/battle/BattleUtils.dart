@@ -14,53 +14,71 @@ class BattleUtils
 		return new Random().nextInt((end - start) + 1) + start;
 	}
 
-	static int getDamageStep1({
-	                                           num strength: 1,
+	static num getDamageStep1({
+	                                           num vigor: 1,
 	                                           num battlePower: 1,
+												num spellPower: 1,
+												num magicPower: 1,
 	                                           int level: 1,
 	                                           bool equippedWithGauntlet: false,
 	                                           bool equippedWithOffering: false,
 	                                           bool standardFightAttack: true,
+												bool isPhysicalAttack: true,
+												bool isMagicalAttack: false,
+												bool isPlayerAndNotMonster: true,
 	                                           bool genjiGloveEquipped: false,
 	                                           bool oneOrZeroWeapons: true
 	                                           })
 	{
-		num strength2 = strength * 2;
-		if(strength >= 128)
+
+		num damage;
+
+		if(isPhysicalAttack == false && isMagicalAttack == true && isPlayerAndNotMonster == true)
 		{
-			strength2 = 255;
+			damage = spellPower * 4 + (level * magicPower * spellPower / 32);
+		}
+		else if(isPhysicalAttack == false && isMagicalAttack == true && isPlayerAndNotMonster == false)
+		{
+			damage = spellPower * 4 + (Level * (magicPower * 3/2) * spellPower / 32);
+		}
+		else if(isPhysicalAttack == true && isPlayerAndNotMonster == true)
+		{
+			num vigor2 = vigor * 2;
+			if (vigor >= 128)
+			{
+				vigor2 = 255;
+			}
+
+			num attack = battlePower + vigor2;
+
+			if (equippedWithGauntlet)
+			{
+				attack += (battlePower * 3 / 4);
+			}
+
+			damage = battlePower + ( (level * level * attack) / 256) * 3 / 2;
+
+			if (equippedWithOffering)
+			{
+				damage /= 2;
+			}
+
+			if (standardFightAttack && genjiGloveEquipped && oneOrZeroWeapons)
+			{
+				damage = (damage * 3/4).ceil();
+			}
+		}
+		else if(isPhysicalAttack == true && isPlayerAndNotMonster == false)
+		{
+			damage = level * level * (battlePower * 4 + vigor) / 256;
 		}
 
-		num attack = battlePower + strength2;
-
-		if(equippedWithGauntlet)
-		{
-			attack += (battlePower * 3/4);
-		}
-
-		num damage = battlePower + ( (level * level * attack) / 256) * 3/2;
-
-		if(equippedWithOffering)
-		{
-			damage /= 2;
-		}
-
-		if(standardFightAttack && genjiGloveEquipped && oneOrZeroWeapons)
-		{
-			damage = (damage * 3/4).ceil();
-		}
-
-		return damage.round();
+		return damage;
 	}
 
-	static int getRandomMonsterStrength()
+	static int getRandomMonsterVigor()
 	{
 		return getRandomNumberFromRange(56, 63);
-	}
-
-	static num getMonsterPhysicalDamageStep1({int level: 1, num battlePower: 1, int strength: 1})
-	{
-		return level * level * (battlePower * 4 + strength) / 256;
 	}
 
 	static num getDamageStep2({num damage: 0,
