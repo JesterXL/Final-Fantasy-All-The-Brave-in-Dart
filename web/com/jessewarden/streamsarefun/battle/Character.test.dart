@@ -4,6 +4,7 @@ import "package:test/test.dart";
 import 'battlecore.dart';
 import 'dart:async';
 import '../enums/enums.dart';
+import '../relics/relics.dart';
 
 void main()
 {
@@ -108,6 +109,77 @@ void main()
 				});
 				character.hitPoints = 0;
 				character.hitPoints = 100;
+			});
+		});
+
+		group('equip relic predicates', ()
+		{
+			setUp(()
+			{
+				character = new Character(hitPoints: 200);
+			});
+
+			tearDown(()
+			{
+				character = null;
+			});
+
+			test("no default relics", ()
+			{
+				expect(character.equippedWithNoRelics(), isTrue);
+			});
+
+			test("no Gauntlet by default", ()
+			{
+				expect(character.equippedWithGauntlet(), isFalse);
+			});
+
+			test("equipping Gauntlet works", ()
+			{
+				Gauntlet gauntlet = new Gauntlet();
+				character.relic1 = gauntlet;
+				expect(character.equippedWithGauntlet(), isTrue);
+			});
+
+			test("equipping HeroRing works", ()
+			{
+				Gauntlet gauntlet = new Gauntlet();
+				character.relic1 = gauntlet;
+				expect(character.equippedWithGauntlet(), isTrue);
+			});
+
+			group("HeroRing predicates", ()
+			{
+				HeroRing ring1 = new HeroRing();
+				HeroRing ring2 = new HeroRing();
+
+				tearDown(()
+				{
+					character.relic1 = null;
+					character.relic2 = null;
+				});
+
+				test("HeroRing work", ()
+				{
+					character.relic1 = ring1;
+					expect(character.equippedWithHeroRing(), isTrue);
+					expect(character.equippedWith2HeroRings(), isFalse);
+				});
+
+				test("2 HeroRings work", ()
+				{
+					character.relic1 = ring1;
+					character.relic2 = ring2;
+					expect(character.equippedWith1HeroRing(), isFalse);
+					expect(character.equippedWith2HeroRings(), isTrue);
+				});
+
+				test("2 HeroRings work", ()
+				{
+					character.relic1 = ring1;
+					expect(character.equippedWith1HeroRing(), isTrue);
+					expect(character.equippedWith2HeroRings(), isFalse);
+				});
 			});
 		});
 	});

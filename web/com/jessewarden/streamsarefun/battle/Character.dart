@@ -6,8 +6,8 @@ class Character
 	int speed;
 	int stamina;
 	int magicPower;
-	int evadePercent;
-	int magicBlockPercent;
+	int evade;
+	int magicBlock;
 
 	int defense;
 	int magicDefense;
@@ -29,6 +29,11 @@ class Character
 	Relic relic2 = null;
 
 	// TODO: figure out reflection/mirrors
+	bool equippedWithNoRelics()
+	{
+		return relic1 == null && relic2 == null;
+	}
+
 	bool equippedWithGauntlet()
 	{
 		return relic1 is Gauntlet || relic2 is Gauntlet;
@@ -43,6 +48,42 @@ class Character
 	{
 		return relic1 is GenjiGlove || relic2 is GenjiGlove;
 	}
+
+	bool equippedWithAtlasArmlet()
+	{
+		return relic1 is AtlasArmlet || relic2 is AtlasArmlet;
+	}
+
+	bool equippedWithHeroRing()
+	{
+		return relic1 is HeroRing || relic2 is HeroRing;
+	}
+
+	bool equippedWith1HeroRing()
+	{
+		return (relic1 is HeroRing && relic2 is !HeroRing) || (relic1 is !HeroRing && relic2 is HeroRing);
+	}
+
+	bool equippedWith2HeroRings()
+	{
+		return relic1 is HeroRing && relic2 is HeroRing;
+	}
+
+	bool equippedWithEarring()
+	{
+		return relic1 is Earring || relic2 is Earring;
+	}
+
+	bool equippedWith1Earring()
+	{
+		return (relic1 is Earring && relic2 is !Earring) || (relic1 is !Earring && relic2 is Earring);
+	}
+
+	bool equippedWith2Earrings()
+	{
+		return relic1 is Earring && relic2 is Earring;
+	}
+
 
 	bool rightHandHasWeapon() => rightHand != null;
 	bool leftHandHasWeapon() => leftHand != null;
@@ -131,14 +172,12 @@ class Character
 	Stream<CharacterEvent> stream;
 
 	Character({int this.speed: 80,
-	          int this.strength: 10,
+	          int this.vigor: 10,
 	          int this.stamina: 10,
 	          int this.magicBlock: 10,
-	          int this.vigor: 10,
 				Row row: Row.FRONT,
 				int hitPoints: 0,
 	          int this.defense: 10,
-	          int this.magicalDefense: 10,
 	          bool this.dead: false,
 	          int this.level: 3})
 	{

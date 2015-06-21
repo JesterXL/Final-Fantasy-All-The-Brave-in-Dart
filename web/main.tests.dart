@@ -12,7 +12,7 @@ void main()
 //	GameLoopTest.main();
 //	BattleTimerTest.main();
 //	InitiativeTest.main();
-	BattleUtilsTest.main();
+//	BattleUtilsTest.main();
 //	BattleControllerTest.main();
-//	CharacterTest.main();
+	CharacterTest.main();
 }

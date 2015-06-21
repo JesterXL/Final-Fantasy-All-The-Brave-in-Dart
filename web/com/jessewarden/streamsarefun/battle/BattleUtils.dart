@@ -64,7 +64,6 @@ class BattleUtils
 	}
 
 	static num getCharacterDamageStep2({num damage: 0,
-	                                   bool isMagicalAttacker: false,
 	                                   bool isPhysicalAttack: true,
 	                                   bool isMagicalAttack: false,
 	                                   bool equippedWithAtlasArmlet: false,
@@ -432,16 +431,9 @@ class BattleUtils
 		);
 		int damage = 0;
 		bool criticalHit = false;
+		bool standardFightAttack = isStandardFightAttack(isPhysicalAttack, isMagicalAttack);
 		if(hitResult.hit)
 		{
-			int battlePower = 28; // TODO: need weapon info, battle power comes from it/them
-
-			bool equippedWithGauntlet = false; // TODO: is the character?
-			bool equippedWithOffering = false; // TODO: is the character?
-			bool standardFightAttack = isStandardFightAttack(isPhysicalAttack, isMagicalAttack);  // TODO: is the character?
-			bool genjiGloveEquipped = false;  // TODO: is the character?
-			bool oneOrZeroWeapons = true;  // TODO: is the character?
-
 			damage = BattleUtils.getCharacterPhysicalDamageStep1(
 				strength: attacker.vigor,
 				battlePower: attacker.battlePower,
@@ -453,23 +445,16 @@ class BattleUtils
 				oneOrZeroWeapons: attacker.oneOrZeroWeapons()
 			);
 
-			bool isMagicalAttacker = false;
-			bool isPhysicalAttack = true;
-			bool isMagicalAttack = false;
-			bool equippedWithAtlasArmlet = false;
-			bool equippedWith1HeroRing = false;
-			bool equippedWith2HeroRings = false;
-			bool equippedWith1Earring = false;
-			bool equippedWith2Earrings = false;
-			damage = BattleUtils.getCharacterDamageStep2(damage,
-			isMagicalAttacker,
-			isPhysicalAttack,
-			isMagicalAttack,
-			equippedWithAtlasArmlet,
-			equippedWith1HeroRing,
-			equippedWith2HeroRings,
-			equippedWith1Earring,
-			equippedWith2Earrings);
+			damage = BattleUtils.getCharacterDamageStep2(
+				damage: damage,
+				isPhysicalAttack: isPhysicalAttack,
+				isMagicalAttack: isMagicalAttack,
+				equippedWithAtlasArmlet: attacker.equippedWithAtlasArmlet(),
+				equippedWith1HeroRing: attacker.equippedWith1HeroRing(),
+				equippedWith2HeroRings: attacker.equippedWith2HeroRings(),
+				equippedWith1Earring: attacker.equippedWith1Earring(),
+				equippedWith2Earrings: attacker.equippedWith2Earrings()
+			);
 
 			criticalHit = BattleUtils.getCriticalHit();
 
