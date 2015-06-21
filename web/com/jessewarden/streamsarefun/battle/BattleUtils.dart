@@ -14,7 +14,7 @@ class BattleUtils
 		return new Random().nextInt((end - start) + 1) + start;
 	}
 
-	static int getCharacterPhysicalDamageStep1({
+	static int getDamageStep1({
 	                                           num strength: 1,
 	                                           num battlePower: 1,
 	                                           int level: 1,
@@ -63,7 +63,7 @@ class BattleUtils
 		return level * level * (battlePower * 4 + strength) / 256;
 	}
 
-	static num getCharacterDamageStep2({num damage: 0,
+	static num getDamageStep2({num damage: 0,
 	                                   bool isPhysicalAttack: true,
 	                                   bool isMagicalAttack: false,
 	                                   bool equippedWithAtlasArmlet: false,
@@ -91,14 +91,32 @@ class BattleUtils
 		return damage;
 	}
 
-	static num getMagicalMultipleTargetsAttack(num damage)
+	static num getDamageStep3({
+		num damage: 0,
+		bool isMagicalAttack: false,
+		bool attackingMultipleTargets: false})
 	{
-		return damage / 2;
+		if(isMagicalAttack == true && attackingMultipleTargets == true)
+		{
+			return damage / 2;
+		}
+		else
+		{
+			return damage;
+		}
 	}
 
-	static num getAttackerBackRowFightCommand(num damage)
+	// TODO: figure out 'if fight command'
+	static num getDamageStep4({num damage: 0, attackerIsInBackRow: false})
 	{
-		return damage / 2;
+		if(attackerIsInBackRow == true)
+		{
+			return damage / 2;
+		}
+		else
+		{
+			return damage;
+		}
 	}
 
 	static bool getCriticalHit()
@@ -107,7 +125,7 @@ class BattleUtils
 		return digit.nextInt(31) == 31;
 	}
 
-	static num getDamageMultipliers({num damage: 0,
+	static num getDamageStep5({num damage: 0,
 	                                bool hasMorphStatus: false,
 	                                bool hasBerserkStatusAndPhysicalAttack: false,
 	                                bool isCriticalHit: false})
@@ -138,7 +156,7 @@ class BattleUtils
 		return getRandomNumberFromRange(224, 255);
 	}
 
-	static num getDamageModifications({num damage: 0,
+	static num getDamageStep6({num damage: 0,
 	                                  num defense: 0,
 	                                  num magicalDefense: 0,
 									  num variance: 224,
@@ -199,7 +217,7 @@ class BattleUtils
 		return damage;
 	}
 
-	static num getDamageMultiplierStep7({num damage: 0,
+	static num getDamageStep7({num damage: 0,
 	                                    bool hittingTargetsBack: false,
 	                                    bool isPhysicalAttack: true})
 	{
@@ -222,12 +240,13 @@ class BattleUtils
 		return damage;
 	}
 
-	static num getDamageStep9({num damage: 0,
-	bool elementHasBeenNullified: false,
-	bool targetAbsorbsElement: false,
-	bool targetIsImmuneToElement: false,
-	bool targetIsResistantToElement: false,
-	bool targetIsWeakToElement: false
+	static num getDamageStep9({
+	                                   num damage: 0,
+										bool elementHasBeenNullified: false,
+										bool targetAbsorbsElement: false,
+										bool targetIsImmuneToElement: false,
+										bool targetIsResistantToElement: false,
+										bool targetIsWeakToElement: false
 	})
 	{
 		if(elementHasBeenNullified)
@@ -434,7 +453,7 @@ class BattleUtils
 		bool standardFightAttack = isStandardFightAttack(isPhysicalAttack, isMagicalAttack);
 		if(hitResult.hit)
 		{
-			damage = BattleUtils.getCharacterPhysicalDamageStep1(
+			damage = BattleUtils.getDamageStep1(
 				strength: attacker.vigor,
 				battlePower: attacker.battlePower,
 				level: attacker.level,
@@ -445,7 +464,7 @@ class BattleUtils
 				oneOrZeroWeapons: attacker.oneOrZeroWeapons()
 			);
 
-			damage = BattleUtils.getCharacterDamageStep2(
+			damage = BattleUtils.getDamageStep2(
 				damage: damage,
 				isPhysicalAttack: isPhysicalAttack,
 				isMagicalAttack: isMagicalAttack,
@@ -456,59 +475,69 @@ class BattleUtils
 				equippedWith2Earrings: attacker.equippedWith2Earrings()
 			);
 
-			criticalHit = BattleUtils.getCriticalHit();
+			damage = BattleUtils.getDamageStep3(
+				damage: damage,
+				isMagicalAttack: isMagicalAttack,
+				attackingMultipleTargets: attackingMultipleTargets);
 
-			bool hasMorphStatus = false;
-			bool hasBerserkStatus = false;
-			damage = BattleUtils.getDamageMultipliers(damage,
-			hasMorphStatus,
-			hasBerserkStatus,
-			criticalHit);
+			damage = BattleUtils.getDamageStep4(
+				damage: damage,
+				attackerIsInBackRow: attackIsInBackRow
+			);
 
-			// TODO: need armor of target so we can calculate defense
-			int defense = attacker.defense; // 16
-			int magicalDefense = attacker.magicalDefense; // 0
-	//			isPhysicalAttack,
-	//			 isMagicalAttack,
-			bool targetHasSafeStatus = false;
-			bool targetHasShellStatus = false;
-			bool targetDefending = false;
-			bool targetIsInBackRow = false;
-			bool targetHasMorphStatus = false;
-			bool targetIsSelf = false;
-			bool targetIsCharacter = false;
-			bool attackerIsCharacter = true;
+			damage = BattleUtils.getDamageStep5(
+				damage: damage,
+				hasMorphStatus: hasMorphStatus,
+				hasBerserkStatusAndPhysicalAttack: hasBerserkStatusAndPhysicalAttack,
+				isCriticalHit: isCriticalHit
+			);
 
-			damage = BattleUtils.getDamageModifications(damage,
-			defense,
-			magicalDefense,
-			attack.isPhysicalAttack,
-			attack.isMagicalAttack,
-			targetHasSafeStatus,
-			targetHasShellStatus,
-			targetDefending,
-			targetIsInBackRow,
-			targetHasMorphStatus,
-			targetIsSelf,
-			targetIsCharacter,
-			attackerIsCharacter);
+			damage = BattleUtils.getDamageStep6(
+				damage: damage,
+				defense: attacker.defense,
+				magicalDefense: attacker.magicDefense,
+				variance: variance,
+				isPhysicalAttack: isPhysicalAttack,
+				isMagicalAttack: isMagicalAttack,
+				targetHasSafeStatus: targetHasSafeStatus,
+				targetHasShellStatus: targetHasShellStatus,
+				targetDefending: targetDefending,
+				targetIsInBackRow: targetIsInBackRow,
+				targetHasMorphStatus: targetHasMorphStatus,
+				targetIsSelf: targetIsSelf,
+				targetIsCharacter: targetIsCharacter,
+				attackerIsCharacter: attackerIsCharacter
+			);
 
-			// damage, hittingTargetsBack, isPhysicalAttack)
-			bool hittingTargetsBack = false;
-			damage = BattleUtils.getDamageMultiplierStep7(damage,
-			hittingTargetsBack,
-			attack.isPhysicalAttack);
-			if(damage > 9999)
-			{
-				throw "What, 9000!?!";
-			}
+			damage = BattleUtils.getDamageStep7(
+				damage: damage,
+				hittingTargetsBack: hittingTargetsBack,
+				isPhysicalAttack: isPhysicalAttack
+			);
+
+			damage = BattleUtils.getDamageStep8(
+				damage: damage,
+				targetHasPetrifyStatus: targetHasPetrifyStatus
+			);
+
+			damage = BattleUtils.getDamageStep9(
+				damage: damage,
+				elementHasBeenNullified: elementHasBeenNullified,
+				targetAbsorbsElement: targetAbsorbsElement,
+				targetIsImmuneToElement: targetIsImmuneToElement,
+				targetIsResistantToElement: targetIsResistantToElement,
+				targetIsWeakToElement: targetIsWeakToElement
+			);
 		}
 
-		targetHitResults.add(new TargetHitResult(criticalHit: criticalHit,
-		hit: hitResult.hit,
-		damage: damage,
-		removeImageStatus: hitResult.removeImageStatus,
-		target: target
-		));
+		targetHitResults.add(
+			new TargetHitResult(
+				criticalHit: criticalHit,
+				hit: hitResult.hit,
+				damage: damage,
+				removeImageStatus: hitResult.removeImageStatus,
+				target: target
+			)
+		);
 	}
 }
