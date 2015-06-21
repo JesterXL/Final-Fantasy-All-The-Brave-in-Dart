@@ -35,10 +35,10 @@ void main()
 //  testBattleTimer();
 //	testTextDropper();
 //	testBattleTimerBar();
-	testInitiative();
+//	testInitiative();
 //	testMath();
 //	testWarriorSprite();
-//	testCharacterList();
+	testCharacterList();
 //testingMerge();
 //	test();
 

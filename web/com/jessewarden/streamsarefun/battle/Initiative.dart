@@ -164,14 +164,14 @@ class Initiative
 		});
 	}
 
-void pause()
-{
-	_battleTimers.forEach((TimerCharacterMap object)
+	void pause()
 	{
-		BattleTimer timer = object.battleTimer;
-		timer.pause();
-	});
-}
+		_battleTimers.forEach((TimerCharacterMap object)
+		{
+			BattleTimer timer = object.battleTimer;
+			timer.pause();
+		});
+	}
 
 	void start()
 	{
