@@ -15,3 +15,4 @@ part 'CharacterList.dart';
 part 'MenuItem.dart';
 part 'Menu.dart';
 part 'BattleMenu.dart';
+part 'BattleMenuEvent.dart';

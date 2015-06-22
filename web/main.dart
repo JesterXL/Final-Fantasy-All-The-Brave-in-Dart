@@ -430,6 +430,12 @@ void testBattleMenu()
 	loop.start();
 
 	BattleMenu battleMenu = new BattleMenu(resourceManager, cursorManager, stage);
+	battleMenu.stream
+	.listen((BattleMenuEvent event)
+	{
+		print("item selected: ${event.item}");
+	});
+
 	resourceManager.load()
 	.then((_)
 	{

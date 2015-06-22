@@ -13,6 +13,9 @@ class BattleMenu
 	ResourceManager resourceManager;
 	CursorFocusManager cursorManager;
 	Stage stage;
+	StreamController _controller;
+
+	Stream stream;
 
 	BattleMenu(ResourceManager this.resourceManager,
 	           CursorFocusManager this.cursorManager,
@@ -23,6 +26,9 @@ class BattleMenu
 
 	void init()
 	{
+		_controller = new StreamController.broadcast();
+		stream = _controller.stream;
+
 		mainMenuItems = new ObservableList<MenuItem>();
 		mainMenuItems.add(new MenuItem("Attack"));
 		mainMenuItems.add(new MenuItem("Items"));
@@ -92,6 +98,7 @@ class BattleMenu
 							break;
 					}
 					fsm.changeState('hide');
+					_controller.add(new BattleMenuEvent(BattleMenuEvent.ITEM_SELECTED, selectedItem));
 					break;
 			}
 		});
