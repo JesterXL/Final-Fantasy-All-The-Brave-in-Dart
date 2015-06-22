@@ -40,7 +40,8 @@ void main()
 //	testMath();
 //	testWarriorSprite();
 //	testCharacterList();
-	testBattleMenu();
+//	testBattleMenu();
+testInitiativeAndBattleMenu();
 //testingMerge();
 //	test();
 
@@ -160,17 +161,22 @@ void testInitiative()
 	monsters.add(new Monster(Monster.GOBLIN));
 
 	Initiative initiative = new Initiative(loop.stream, players, monsters);
-	initiative.stream.listen((event)
+	StreamSubscription sub;
+	sub = initiative.stream.listen((event)
 	{
+		print("event: ${event.type}");
+
 		if(event.type == InitiativeEvent.PLAYER_READY)
 		{
 			print("character: ${event.character}");
+			sub.pause();
 		}
-	}).onError((error)
-	{
-		print("Initiative's error: $error");
-		loop.pause();
 	});
+//	.onError((error)
+//	{
+//		print("Initiative's error: $error");
+//		loop.pause();
+//	});
 }
 
 // ((96 * (Speed + 20)) * (255 - ((Battle Speed - 1) * 24))) / 16
@@ -441,6 +447,54 @@ void testBattleMenu()
 	{
 		battleMenu.show();
 	});
+
+}
+
+void testInitiativeAndBattleMenu()
+{
+	resourceManager.addSound("menuBeep", "audio/menu-beep.mp3");
+	CursorFocusManager cursorManager = new CursorFocusManager(stage, resourceManager);
+
+	GameLoop loop = new GameLoop();
+	loop.start();
+
+	ObservableList<Player> players = new ObservableList<Player>();
+	players.add(new Player(Player.WARRIOR));
+	players.add(new Player(Player.WARRIOR));
+	players.add(new Player(Player.WARRIOR));
+
+	ObservableList<Monster> monsters = new ObservableList<Monster>();
+	monsters.add(new Monster(Monster.GOBLIN));
+	monsters.add(new Monster(Monster.GOBLIN));
+	monsters.add(new Monster(Monster.GOBLIN));
+
+	Initiative initiative = new Initiative(loop.stream, players, monsters);
+	StreamSubscription sub;
+
+	BattleMenu battleMenu = new BattleMenu(resourceManager, cursorManager, stage);
+	battleMenu.stream
+	.listen((BattleMenuEvent event)
+	{
+		sub.resume();
+	});
+
+	resourceManager.load()
+	.then((_)
+	{
+		sub = initiative.stream.listen((event)
+		{
+			print("event: ${event.type}");
+
+			if(event.type == InitiativeEvent.PLAYER_READY)
+			{
+				print("character: ${event.character}");
+				sub.pause();
+				battleMenu.show();
+			}
+		});
+	});
+
+
 
 }
 
