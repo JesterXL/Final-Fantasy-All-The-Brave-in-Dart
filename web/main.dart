@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:stagexl/stagexl.dart';
 import 'package:observe/observe.dart';
 //import 'package:frappe/frappe.dart';
+import 'package:jxlstatemachine/jxlstatemachine.dart';
 
 import 'com/jessewarden/streamsarefun/core/streamscore.dart';
 import 'com/jessewarden/streamsarefun/battle/battlecore.dart';
@@ -41,10 +42,10 @@ void main()
 //	testWarriorSprite();
 //	testCharacterList();
 //	testBattleMenu();
-testInitiativeAndBattleMenu();
+//testInitiativeAndBattleMenu();
 //testingMerge();
 //	test();
-
+	testBasicAttack();
 //	testBattleController();
 
 }
@@ -493,6 +494,154 @@ void testInitiativeAndBattleMenu()
 			}
 		});
 	});
+}
+
+void testBasicAttack()
+{
+	resourceManager.addSound("menuBeep", "audio/menu-beep.mp3");
+	CursorFocusManager cursorManager = new CursorFocusManager(stage, resourceManager);
+
+	GameLoop loop = new GameLoop();
+	loop.start();
+
+	ObservableList<Player> players = new ObservableList<Player>();
+	players.add(new Player(characterType: Player.WARRIOR, name: 'Locke'));
+	players.add(new Player(characterType: Player.WARRIOR, name: 'Celes'));
+	players.add(new Player(characterType: Player.WARRIOR, name: 'Sabin'));
+
+	ObservableList<Monster> monsters = new ObservableList<Monster>();
+	monsters.add(new Monster(Monster.GOBLIN));
+	monsters.add(new Monster(Monster.GOBLIN));
+	monsters.add(new Monster(Monster.GOBLIN));
+
+	Initiative initiative = new Initiative(loop.stream, players, monsters);
+	StreamSubscription sub;
+
+	BattleMenu battleMenu = new BattleMenu(resourceManager, cursorManager, stage);
+
+	Character getRandomTarget(ObservableList<Character> targets)
+	{
+		List copy = targets.toList();
+		Random random = new Random(copy.length - 1);
+		copy.shuffle(random);
+		return copy[0];
+	}
+
+	StreamSubscription streamSubscription;
+	StreamSubscription battleMenuStreamSubscription;
+
+	StateMachine battleStateMachine = new StateMachine();
+	battleStateMachine.addState('loading');
+	battleStateMachine.addState('waiting',
+		enter: ()
+		{
+			if(streamSubscription == null)
+			{
+				streamSubscription = initiative.stream
+				.where((event)
+				{
+					return event is InitiativeEvent;
+				})
+				.where((event)
+				{
+					return event.type == InitiativeEvent.PLAYER_READY;
+				})
+				.listen((InitiativeEvent event)
+				{
+					print('${event.character.name} is ready.');
+					battleStateMachine.changeState('characterChoosing');
+				});
+			}
+			else
+			{
+				streamSubscription.resume();
+			}
+		},
+
+		exit: ()
+		{
+			streamSubscription.pause();
+		}
+	);
+	battleStateMachine.addState('characterChoosing',
+		from: ['waiting'],
+		enter: ()
+		{
+			battleMenuStreamSubscription = battleMenu.stream
+			.listen((BattleMenuEvent event)
+			{
+				print("clicked: ${event.item}");
+				battleStateMachine.changeState('characterActing');
+
+			});
+			battleMenu.show();
+		},
+		exit: ()
+		{
+			battleMenuStreamSubscription.cancel();
+		}
+	);
+	battleStateMachine.addState('characterActing',
+		enter: ()
+		{
+			new Future.delayed(new Duration(seconds: 3), ()
+			{
+				print("Done acting, changing...");
+				battleStateMachine.changeState('waiting');
+			});
+		});
+	battleStateMachine.addState('win');
+	battleStateMachine.addState('lost');
+	battleStateMachine.changes.listen((StateMachineEvent event)
+	{
+		print("state change: ${battleStateMachine.currentState.name}");
+	});
+	battleStateMachine.initialState = 'loading';
+	resourceManager.load()
+	.then((_)
+	{
+		battleStateMachine.initialState = 'waiting';
+	});
+
+
+
+
+
+//	fsm.addState('hide',
+//		enter: ()
+//		{
+//		mainMenu.removeFromParent();
+//		defendMenu.removeFromParent();
+//		rowMenu.removeFromParent();
+//		cursorManager.clearAllTargets();
+//		});
+//
+//		fsm.addState("main",
+//		enter: ()
+//		{
+//		stage.addChild(mainMenu);
+//		cursorManager.setTargets(mainMenu.hitAreas);
+//		});
+//		fsm.addState("defense", from: ["main"],
+//		enter: ()
+//		{
+//		stage.addChild(defendMenu);
+//		cursorManager.setTargets(defendMenu.hitAreas);
+//		},
+//		exit: ()
+//		{
+//		stage.removeChild(defendMenu);
+//		});
+//		fsm.addState("row", from: ["main"],
+//		enter: ()
+//		{
+//		stage.addChild(rowMenu);
+//		cursorManager.setTargets(rowMenu.hitAreas);
+//		},
+//		exit: ()
+//		{
+//		stage.removeChild(rowMenu);
+
 
 
 

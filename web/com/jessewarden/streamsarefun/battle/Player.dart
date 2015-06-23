@@ -10,7 +10,10 @@ class Player extends Character
 
 	String get characterType => _characterType;
 
-	Player(String this._characterType)
+	Player({String characterType, String name: 'Default'})
 	{
+		_characterType = characterType;
+		this.name = name;
+
 	}
 }

@@ -2,6 +2,8 @@ part of battlecore;
 
 class Character
 {
+	String name;
+
 	int vigor;
 	int speed;
 	int stamina;
