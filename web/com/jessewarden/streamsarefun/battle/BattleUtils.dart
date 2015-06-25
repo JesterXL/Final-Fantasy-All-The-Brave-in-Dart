@@ -39,7 +39,7 @@ class BattleUtils
 		}
 		else if(isPhysicalAttack == false && isMagicalAttack == true && isPlayerAndNotMonster == false)
 		{
-			damage = spellPower * 4 + (Level * (magicPower * 3/2) * spellPower / 32);
+			damage = spellPower * 4 + (level * (magicPower * 3/2) * spellPower / 32);
 		}
 		else if(isPhysicalAttack == true && isPlayerAndNotMonster == true)
 		{
@@ -429,7 +429,7 @@ class BattleUtils
 		return isPhysicalAttack == true && isMagicalAttack == false;
 	}
 
-	static void hitAndApplyDamage(Character attacker,
+	static HitResult getHitAndApplyDamage(Character attacker,
 	                              {bool isPhysicalAttack: true,
 	                              bool isMagicalAttack: false,
 	                              bool targetHasClearStatus: false,
@@ -441,12 +441,29 @@ class BattleUtils
 	                              bool targetHasPetrifyStatus: false,
 	                              bool targetHasFreezeStatus: false,
 	                              bool targetHasStopStatus: false,
+	                              bool targetHasSafeStatus: false,
+	                              bool targetHasShellStatus: false,
+	                              bool targetDefending: false,
+	                              bool targetIsInBackRow: false,
+	                              bool targetHasMorphStatus: false,
+	                              bool targetIsSelf: false,
+	                              bool targetIsCharacter: false,
 	                              bool backOfTarget: false,
 	                              bool targetHasImageStatus: false,
 	                              int hitRate: 180,  // TODO: need weapon's info, this is where hitRate comes from
 	                              int magicBlock: 0,
 	                              int targetStamina: null,
-	                              AttackType specialAttackType: null})
+	                              AttackType specialAttackType: null,
+	                              bool attackerIsCharacter: true,
+	                              bool attackingMultipleTargets: false,
+	                              bool attackerIsInBackRow: false,
+	                              bool attackerHasMorphStatus: false,
+	                              bool attackerHasBerserkStatusAndPhysicalAttack: false,
+	                              bool elementHasBeenNullified: false,
+	                              bool targetAbsorbsElement: false,
+	                              bool targetIsImmuneToElement: false,
+	                              bool targetIsResistantToElement: false,
+	                              bool targetIsWeakToElement: false})
 	{
 		HitResult hitResult = BattleUtils.getHit(
 			randomHitOrMissValue: getRandomHitOrMissValue(),
@@ -471,12 +488,13 @@ class BattleUtils
 			specialAttackType: specialAttackType
 		);
 		int damage = 0;
-		bool criticalHit = false;
+		bool criticalHit = getCriticalHit();
+		int damageModificationVariance = getDamageModificationsVariance();
 		bool standardFightAttack = isStandardFightAttack(isPhysicalAttack, isMagicalAttack);
 		if(hitResult.hit)
 		{
 			damage = BattleUtils.getDamageStep1(
-				strength: attacker.vigor,
+				vigor: attacker.vigor,
 				battlePower: attacker.battlePower,
 				level: attacker.level,
 				equippedWithGauntlet: attacker.equippedWithGauntlet(),
@@ -504,21 +522,21 @@ class BattleUtils
 
 			damage = BattleUtils.getDamageStep4(
 				damage: damage,
-				attackerIsInBackRow: attackIsInBackRow
+				attackerIsInBackRow: attackerIsInBackRow
 			);
 
 			damage = BattleUtils.getDamageStep5(
 				damage: damage,
-				hasMorphStatus: hasMorphStatus,
-				hasBerserkStatusAndPhysicalAttack: hasBerserkStatusAndPhysicalAttack,
-				isCriticalHit: isCriticalHit
+				hasMorphStatus: attackerHasMorphStatus,
+				hasBerserkStatusAndPhysicalAttack: attackerHasBerserkStatusAndPhysicalAttack,
+				isCriticalHit: criticalHit
 			);
 
 			damage = BattleUtils.getDamageStep6(
 				damage: damage,
 				defense: attacker.defense,
 				magicalDefense: attacker.magicDefense,
-				variance: variance,
+				variance: damageModificationVariance,
 				isPhysicalAttack: isPhysicalAttack,
 				isMagicalAttack: isMagicalAttack,
 				targetHasSafeStatus: targetHasSafeStatus,
@@ -533,7 +551,7 @@ class BattleUtils
 
 			damage = BattleUtils.getDamageStep7(
 				damage: damage,
-				hittingTargetsBack: hittingTargetsBack,
+				hittingTargetsBack: backOfTarget,
 				isPhysicalAttack: isPhysicalAttack
 			);
 
@@ -552,14 +570,22 @@ class BattleUtils
 			);
 		}
 
-		targetHitResults.add(
-			new TargetHitResult(
-				criticalHit: criticalHit,
-				hit: hitResult.hit,
-				damage: damage,
-				removeImageStatus: hitResult.removeImageStatus,
-				target: target
-			)
+		// TODO: support attacking mulitple targets
+		return new TargetHitResult(
+			criticalHit: criticalHit,
+			hit: hitResult.hit,
+			damage: damage,
+			removeImageStatus: hitResult.removeImageStatus
 		);
+
+//		targetHitResults.add(
+//			new TargetHitResult(
+//				criticalHit: criticalHit,
+//				hit: hitResult.hit,
+//				damage: damage,
+//				removeImageStatus: hitResult.removeImageStatus,
+//				target: target
+//			)
+//		);
 	}
 }

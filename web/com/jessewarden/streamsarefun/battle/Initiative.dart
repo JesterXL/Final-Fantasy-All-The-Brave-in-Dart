@@ -11,7 +11,6 @@ class Initiative
 	ObservableList<Player> get players => _players;
 	ObservableList<Monster> get monsters => _monsters;
 
-	ObservableList<Character> charactersReady = new ObservableList<Character>();
 	Stream stream;
 
 	Initiative(this._gameLoopStream, this._players, this._monsters)
@@ -21,8 +20,8 @@ class Initiative
 
 	void init()
 	{
-		_streamController = new StreamController(onPause: onPause, onResume: onResume);
-		stream = _streamController.stream.asBroadcastStream();
+		_streamController = new StreamController.broadcast();
+		stream = _streamController.stream;
 		List participants = new List();
 		participants.add(players);
 		participants.add(monsters);
@@ -57,7 +56,6 @@ class Initiative
 				// NOTE: pausing the BattleTimer, not the Stream listener... lol, streams!
 				matched.battleTimer.pause();
 				Character targetCharacter = matched.character;
-				charactersReady.add(targetCharacter);
 				if(targetCharacter is Player)
 				{
 					_streamController.add(new InitiativeEvent(InitiativeEvent.PLAYER_READY,
@@ -75,6 +73,17 @@ class Initiative
 				_streamController.add(event);
 			}
 		});
+
+		timer.stream
+		.where((BattleTimerEvent event)
+		{
+			return event.type == BattleTimerEvent.STARTED;
+		})
+		.listen((BattleTimerEvent event)
+		{
+			print("BattleTimer started.");
+		});
+
 		timer.speed = character.speed;
 
 		if(character is Player)
@@ -178,18 +187,10 @@ class Initiative
 		_battleTimers.forEach((TimerCharacterMap object)
 		{
 			BattleTimer timer = object.battleTimer;
+			print("is timer enabled?: ${timer.enabled}");
+			print("is timer running?: ${timer.running}");
 			timer.start();
 		});
-	}
-
-	void onPause()
-	{
-		pause();
-	}
-
-	void onResume()
-	{
-		start();
 	}
 
 	void onDeath(Character character)

@@ -62,7 +62,7 @@ class BattleTimer
 	BattleTimer(Stream<GameLoopEvent> _gameLoopStream, String mode)
 	{
 		_streamController = new StreamController<BattleTimerEvent>(onPause: _onPause, onResume: _onResume);
-		stream = _streamController.stream;
+		stream = _streamController.stream.asBroadcastStream();
 		this._gameLoopStream = _gameLoopStream;
 		this.mode = mode;
 	}

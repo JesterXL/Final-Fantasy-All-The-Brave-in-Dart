@@ -152,9 +152,9 @@ void testInitiative()
 	loop.start();
 
 	ObservableList<Player> players = new ObservableList<Player>();
-	players.add(new Player(Player.WARRIOR));
-	players.add(new Player(Player.WARRIOR));
-	players.add(new Player(Player.WARRIOR));
+	players.add(new Player(characterType: Player.WARRIOR));
+	players.add(new Player(characterType: Player.WARRIOR));
+	players.add(new Player(characterType: Player.WARRIOR));
 
 	ObservableList<Monster> monsters = new ObservableList<Monster>();
 	monsters.add(new Monster(Monster.GOBLIN));
@@ -527,8 +527,17 @@ void testBasicAttack()
 		return copy[0];
 	}
 
+	CharacterList characterList = new CharacterList(
+		initiative: initiative,
+		resourceManager: resourceManager,
+		stage: stage,
+		renderLoop: renderLoop
+	);
+	stage.addChild(characterList);
+
 	StreamSubscription streamSubscription;
 	StreamSubscription battleMenuStreamSubscription;
+	Player actingPlayer;
 
 	StateMachine battleStateMachine = new StateMachine();
 	battleStateMachine.addState('loading');
@@ -542,25 +551,38 @@ void testBasicAttack()
 				{
 					return event is InitiativeEvent;
 				})
-				.where((event)
-				{
-					return event.type == InitiativeEvent.PLAYER_READY;
-				})
 				.listen((InitiativeEvent event)
 				{
-					print('${event.character.name} is ready.');
-					battleStateMachine.changeState('characterChoosing');
+					switch(event.type)
+					{
+						case InitiativeEvent.PLAYER_READY:
+							print('${event.character.name} is ready.');
+							actingPlayer = event.character;
+							battleStateMachine.changeState('characterChoosing');
+							break;
+
+						case InitiativeEvent.MONSTER_READY:
+							Character target = getRandomTarget(players);
+							TargetHitResult targetHitResult = BattleUtils.getHitAndApplyDamage(
+								event.character,
+								targetStamina: target.stamina
+							);
+							print("Monster targetHitResult: ${targetHitResult.damage}");
+							break;
+
+					}
+
 				});
 			}
 			else
 			{
-				streamSubscription.resume();
+				initiative.start();
 			}
 		},
 
 		exit: ()
 		{
-			streamSubscription.pause();
+			initiative.pause();
 		}
 	);
 	battleStateMachine.addState('characterChoosing',
@@ -571,6 +593,13 @@ void testBasicAttack()
 			.listen((BattleMenuEvent event)
 			{
 				print("clicked: ${event.item}");
+				Character target = getRandomTarget(monsters);
+				TargetHitResult targetHitResult = BattleUtils.getHitAndApplyDamage(
+					actingPlayer,
+					targetStamina: target.stamina
+				);
+//				print("attacking target: $target");
+				print("targetHitResult: ${targetHitResult.damage}");
 				battleStateMachine.changeState('characterActing');
 
 			});
@@ -578,15 +607,18 @@ void testBasicAttack()
 		},
 		exit: ()
 		{
+			// TODO: This instance needs to be kept so when animation is done, we can reset his timer.
+			// Maybe I should just put on the Character/Player object, and create his own state machine...
+			actingPlayer = null;
 			battleMenuStreamSubscription.cancel();
 		}
 	);
 	battleStateMachine.addState('characterActing',
 		enter: ()
 		{
-			new Future.delayed(new Duration(seconds: 3), ()
+			new Future.delayed(new Duration(seconds: 1), ()
 			{
-				print("Done acting, changing...");
+//				print("Done acting, changing...");
 				battleStateMachine.changeState('waiting');
 			});
 		});
@@ -597,54 +629,17 @@ void testBasicAttack()
 		print("state change: ${battleStateMachine.currentState.name}");
 	});
 	battleStateMachine.initialState = 'loading';
+
+	resourceManager.addTextureAtlas('warrior', 'images/warrior/warrior.json', TextureAtlasFormat.JSONARRAY);
+	resourceManager.addTextureAtlas('blackmage', 'images/blackmage/blackmage.json', TextureAtlasFormat.JSONARRAY);
+	resourceManager.addTextureAtlas('thief', 'images/thief/thief.json', TextureAtlasFormat.JSONARRAY);
+
 	resourceManager.load()
 	.then((_)
 	{
 		battleStateMachine.initialState = 'waiting';
+		characterList.init();
 	});
-
-
-
-
-
-//	fsm.addState('hide',
-//		enter: ()
-//		{
-//		mainMenu.removeFromParent();
-//		defendMenu.removeFromParent();
-//		rowMenu.removeFromParent();
-//		cursorManager.clearAllTargets();
-//		});
-//
-//		fsm.addState("main",
-//		enter: ()
-//		{
-//		stage.addChild(mainMenu);
-//		cursorManager.setTargets(mainMenu.hitAreas);
-//		});
-//		fsm.addState("defense", from: ["main"],
-//		enter: ()
-//		{
-//		stage.addChild(defendMenu);
-//		cursorManager.setTargets(defendMenu.hitAreas);
-//		},
-//		exit: ()
-//		{
-//		stage.removeChild(defendMenu);
-//		});
-//		fsm.addState("row", from: ["main"],
-//		enter: ()
-//		{
-//		stage.addChild(rowMenu);
-//		cursorManager.setTargets(rowMenu.hitAreas);
-//		},
-//		exit: ()
-//		{
-//		stage.removeChild(rowMenu);
-
-
-
-
 }
 
 void testBattleController()

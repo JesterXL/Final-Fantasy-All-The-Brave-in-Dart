@@ -4,16 +4,16 @@ class Character
 {
 	String name;
 
-	int vigor;
-	int speed;
-	int stamina;
-	int magicPower;
-	int evade;
-	int magicBlock;
+	int vigor = 1;
+	int speed = 1;
+	int stamina = 1;
+	int magicPower = 1;
+	int evade = 1;
+	int magicBlock = 1;
 
-	int defense;
-	int magicDefense;
-	int battlePower;
+	int defense = 1;
+	int magicDefense = 1;
+	int battlePower = 1;
 
 	bool dead = false;
 	int level = 1;
