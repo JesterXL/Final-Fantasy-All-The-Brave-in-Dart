@@ -22,7 +22,6 @@ class TextDropper
 //		field.borderColor = Color.Green;
 		field.text = value.toString();
 //		print("color: $color");
-		field.defaultTextFormat.align = "center";
 		field.defaultTextFormat.color = color;
 
 		// TODO: object pool these
@@ -47,14 +46,15 @@ class TextDropper
 		else
 		{
 			TextField field = new TextField();
-			field.defaultTextFormat = new TextFormat('Final Fantasy VI SNESa', 52, Color.Black);
+			field.defaultTextFormat = new TextFormat('Final Fantasy VI SNESa', 36, Color.Black);
 			field.text = "???";
-			field.width = 56;
-			field.height = 56;
+			field.width = 100;
+			field.height = 40;
 			field.wordWrap = false;
 			field.multiline = false;
 			field.defaultTextFormat.strokeColor = Color.Black;
 			field.defaultTextFormat.strokeWidth = 2;
+			field.defaultTextFormat.align = "center";
 			return field;
 		}
 	}

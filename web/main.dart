@@ -588,6 +588,7 @@ void testBasicAttack()
 								event.character,
 								targetStamina: target.stamina
 							);
+							target.hitPoints = target.hitPoints - targetHitResult.damage;
 							print("Monster targetHitResult: ${targetHitResult.damage}");
 							break;
 
@@ -622,7 +623,7 @@ void testBasicAttack()
 //				print("attacking target: $target");
 				print("targetHitResult: ${targetHitResult.damage}");
 				Character lastCharacter = actingPlayer;
-				actingPlayer.hitPoints = actingPlayer.hitPoints - 1;
+				target.hitPoints = target.hitPoints - targetHitResult.damage;
 				new Future.delayed(new Duration(seconds: 2), ()
 				{
 					print("actingPlayer's timer getting reset: $lastCharacter");
