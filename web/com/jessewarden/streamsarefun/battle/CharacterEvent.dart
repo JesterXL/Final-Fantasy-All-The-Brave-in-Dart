@@ -21,5 +21,6 @@ class CharacterEvent
 	               BattleState this.oldBattleState,
 	               BattleState this.newBattleState,
 					Row this.oldRow,
-					Row this.newRow}){}
+					Row this.newRow,
+					int this.changeAmount}){}
 }

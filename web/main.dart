@@ -466,9 +466,9 @@ void testInitiativeAndBattleMenu()
 	players.add(new Player(Player.WARRIOR));
 
 	ObservableList<Monster> monsters = new ObservableList<Monster>();
-	monsters.add(new Monster(Monster.GOBLIN));
-	monsters.add(new Monster(Monster.GOBLIN));
-	monsters.add(new Monster(Monster.GOBLIN));
+	monsters.add(new Monster(Monster.LEAFER));
+	monsters.add(new Monster(Monster.LEAFER));
+	monsters.add(new Monster(Monster.LEAFER));
 
 	Initiative initiative = new Initiative(loop.stream, players, monsters);
 	StreamSubscription sub;
@@ -507,7 +507,11 @@ void testBasicAttack()
 
 	int getRandomSpeed()
 	{
-		int result = BattleUtils.getRandomNumberFromRange(20, 80);
+//		int min = 20;
+//		int max = 80;
+		int min = 80;
+		int max = 100;
+		int result = BattleUtils.getRandomNumberFromRange(min, max);
 		print("result: $result");
 		return result;
 //		new Random().nextInt(10);
@@ -519,9 +523,9 @@ void testBasicAttack()
 	players.add(new Player(characterType: Player.WARRIOR, name: 'Sabin', speed: getRandomSpeed()));
 
 	ObservableList<Monster> monsters = new ObservableList<Monster>();
-	monsters.add(new Monster(Monster.GOBLIN));
-	monsters.add(new Monster(Monster.GOBLIN));
-	monsters.add(new Monster(Monster.GOBLIN));
+	monsters.add(new Monster(Monster.LEAFER));
+	monsters.add(new Monster(Monster.LEAFER));
+	monsters.add(new Monster(Monster.LEAFER));
 
 	Initiative initiative = new Initiative(loop.stream, players, monsters);
 	StreamSubscription sub;
@@ -543,6 +547,14 @@ void testBasicAttack()
 		renderLoop: renderLoop
 	);
 	stage.addChild(characterList);
+
+	MonsterList monsterList = new MonsterList(
+		initiative: initiative,
+		resourceManager: resourceManager,
+		stage: stage,
+		renderLoop: renderLoop
+	);
+	stage.addChild(monsterList);
 
 	StreamSubscription streamSubscription;
 	StreamSubscription battleMenuStreamSubscription;
@@ -610,6 +622,7 @@ void testBasicAttack()
 //				print("attacking target: $target");
 				print("targetHitResult: ${targetHitResult.damage}");
 				Character lastCharacter = actingPlayer;
+				actingPlayer.hitPoints = actingPlayer.hitPoints - 1;
 				new Future.delayed(new Duration(seconds: 2), ()
 				{
 					print("actingPlayer's timer getting reset: $lastCharacter");
@@ -637,12 +650,15 @@ void testBasicAttack()
 	resourceManager.addTextureAtlas('warrior', 'images/warrior/warrior.json', TextureAtlasFormat.JSONARRAY);
 	resourceManager.addTextureAtlas('blackmage', 'images/blackmage/blackmage.json', TextureAtlasFormat.JSONARRAY);
 	resourceManager.addTextureAtlas('thief', 'images/thief/thief.json', TextureAtlasFormat.JSONARRAY);
+	resourceManager.addBitmapData("Leafer", "images/monsters/leafer.png");
+	resourceManager.addBitmapData("Areneid", "images/monsters/areneid.png");
 
 	resourceManager.load()
 	.then((_)
 	{
 		battleStateMachine.initialState = 'waiting';
 		characterList.init();
+		monsterList.init();
 	});
 }
 
@@ -657,9 +673,9 @@ void testBattleController()
 	players.add(new Player(Player.THIEF));
 
 	ObservableList<Monster> monsters = new ObservableList<Monster>();
-	monsters.add(new Monster(Monster.GOBLIN));
-	monsters.add(new Monster(Monster.GOBLIN));
-	monsters.add(new Monster(Monster.GOBLIN));
+	monsters.add(new Monster(Monster.LEAFER));
+	monsters.add(new Monster(Monster.LEAFER));
+	monsters.add(new Monster(Monster.LEAFER));
 
 	Initiative initiative = new Initiative(loop.stream, players, monsters);
 	BattleController battleController = new BattleController(initiative);

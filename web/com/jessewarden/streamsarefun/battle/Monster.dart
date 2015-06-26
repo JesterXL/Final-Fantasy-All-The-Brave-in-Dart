@@ -2,8 +2,8 @@ part of battlecore;
 
 class Monster extends Character
 {
-	static const String GOBLIN = "Goblin";
-	static const String SILVER_LOBO = "Silver Lobo";
+	static const String LEAFER = "Leafer";
+	static const String ARENEID = "Areneid";
 
 	String monsterType;
 

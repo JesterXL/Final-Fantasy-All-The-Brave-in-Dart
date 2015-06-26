@@ -34,10 +34,15 @@ abstract class SpriteSheet extends DisplayObjectContainer
 //         addChild(_bitmap);
 //	}
 
+//	Shape debugShape;
+
 	SpriteSheet()
 	{
 		_bitmap = new Bitmap();
 		addChild(_bitmap);
+
+//		debugShape = new Shape();
+//		addChild(debugShape);
 	}
 
 	void init(){}
@@ -85,5 +90,10 @@ abstract class SpriteSheet extends DisplayObjectContainer
 
 		BitmapData bitmapData = _textureAtlas.getBitmapData(currentCycle[_count]);
 		_bitmap.bitmapData = bitmapData;
+
+//		debugShape.graphics.clear();
+//		print("w: $width, h: $height");
+//		debugShape.graphics.rect(0, 0, width, height);
+//		debugShape.graphics.strokeColor(Color.Red, 2);
 	}
 }

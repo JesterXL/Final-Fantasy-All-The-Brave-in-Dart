@@ -12,6 +12,7 @@ import '../managers/managers.dart';
 part 'TextDropper.dart';
 part 'BattleTimerBar.dart';
 part 'CharacterList.dart';
+part 'MonsterList.dart';
 part 'MenuItem.dart';
 part 'Menu.dart';
 part 'BattleMenu.dart';

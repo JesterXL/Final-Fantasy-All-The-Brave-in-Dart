@@ -123,9 +123,10 @@ class Character
 		if(_hitPoints != newValue)
 		{
 			_hitPoints = newValue;
-			CharacterEvent hitPointsEvent = new CharacterEvent(type: CharacterEvent.HIT_POINTS_CHANGED, target: this);
-			hitPointsEvent.changeAmount = oldValue - newValue;
-			_controller.add(new CharacterEvent(type: CharacterEvent.HIT_POINTS_CHANGED, target: this));
+			_controller.add(new CharacterEvent(
+				type: CharacterEvent.HIT_POINTS_CHANGED,
+				target: this,
+				changeAmount: oldValue - newValue));
 			if(oldValue <= 0 && newValue >= 1)
 			{
 				dead = false;

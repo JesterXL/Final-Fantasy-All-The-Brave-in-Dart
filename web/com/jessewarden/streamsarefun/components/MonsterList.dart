@@ -15,10 +15,6 @@ class MonsterList extends DisplayObjectContainer
 	            Stage this.stage,
 	            RenderLoop this.renderLoop})
 	{
-		resourceManager.load().then((_)
-		{
-			init();
-		});
 	}
 
 	void init()
@@ -37,29 +33,17 @@ class MonsterList extends DisplayObjectContainer
 		initiative.monsters.forEach((Monster monster)
 		{
 			// create name
-			TextField nameField = new TextField();
-			nameField.defaultTextFormat = new TextFormat('Final Fantasy VI SNESa', 36, Color.Black);
-			nameField.text = monster.monsterType;
-			nameField.x = startXName;
-			nameField.y = startYName - 40 + 15;
-			nameField.width = 200;
-			nameField.height = 40;
-			startYName += 24;
-			nameField.wordWrap = false;
-			nameField.multiline = false;
-			addChild(nameField);
-
-			initiative.stream
-			.where((event)
-			{
-				return event is InitiativeEvent &&
-				event.type == InitiativeEvent.CHARACTER_READY;
-			})
-			.listen((event)
-			{
-				// TODO: AI here
-				print("monster ready: $event");
-			});
+//			TextField nameField = new TextField();
+//			nameField.defaultTextFormat = new TextFormat('Final Fantasy VI SNESa', 36, Color.Black);
+//			nameField.text = monster.monsterType;
+//			nameField.x = startXName;
+//			nameField.y = startYName - 40 + 15;
+//			nameField.width = 200;
+//			nameField.height = 40;
+//			startYName += 24;
+//			nameField.wordWrap = false;
+//			nameField.multiline = false;
+//			addChild(nameField);
 
 			// create sprite
 			Bitmap bitmap = new Bitmap(getBitmapForMonsterType(monster));
@@ -80,7 +64,7 @@ class MonsterList extends DisplayObjectContainer
 					}
 					else
 					{
-						color = Color.Green;
+						color = Color.Lime;
 					}
 					_textDropper.addTextDrop(bitmap, event.changeAmount, color: color);
 				}
@@ -90,12 +74,7 @@ class MonsterList extends DisplayObjectContainer
 
 	BitmapData getBitmapForMonsterType(Monster monster)
 	{
-		switch(monster.monsterType)
-		{
-			case Monster.TYPE_LEAFER:
-				return resourceManager.getBitmapData(Monster.TYPE_LEAFER);
-		}
-		return null;
+		return resourceManager.getBitmapData(monster.monsterType);
 	}
 
 //	void render(RenderState renderState)

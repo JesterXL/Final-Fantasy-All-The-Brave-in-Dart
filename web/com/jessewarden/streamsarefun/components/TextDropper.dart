@@ -16,20 +16,23 @@ class TextDropper
 		_stage.addChild(field);
 		Point point = new Point(target.x, target.y);
 //		point = target.localToGlobal(point);
-		field.x = point.x + 2;
-		field.y = point.y;
+		field.x = point.x + (target.width / 2) - (field.width / 2);
+		field.y = point.y + target.height - field.height;
+//		field.border = true;
+//		field.borderColor = Color.Green;
 		field.text = value.toString();
 //		print("color: $color");
+		field.defaultTextFormat.align = "center";
 		field.defaultTextFormat.color = color;
 
 		// TODO: object pool these
-		Tween tweenUp = new Tween(field, 0.1, TransitionFunction.easeOutExponential);
-		tweenUp.animate.y.to(field.y - 10);
+		Tween tweenUp = new Tween(field, 0.25, TransitionFunction.easeOutExponential);
+		tweenUp.animate.y.to(field.y - 40);
 
-		Tween tweenDown = new Tween(field, 0.5, TransitionFunction.easeOutBounce);
-		tweenDown.animate.y.to(field.y + 10);
+		Tween tweenDown = new Tween(field, 0.45, TransitionFunction.easeOutBounce);
+		tweenDown.animate.y.to(field.y);
 
-		Tween tweenRemove = new Tween(field, 0.5);
+		Tween tweenRemove = new Tween(field, 0.6);
 		tweenRemove.onComplete = () => _cleanUp(field);
 
 		_renderLoop.juggler.addChain([tweenUp, tweenDown, tweenRemove]);
@@ -44,10 +47,10 @@ class TextDropper
 		else
 		{
 			TextField field = new TextField();
-			field.defaultTextFormat = new TextFormat('Final Fantasy VI SNESa', 26, Color.Black);
+			field.defaultTextFormat = new TextFormat('Final Fantasy VI SNESa', 52, Color.Black);
 			field.text = "???";
-			field.width = 220;
-			field.height = 30;
+			field.width = 56;
+			field.height = 56;
 			field.wordWrap = false;
 			field.multiline = false;
 			field.defaultTextFormat.strokeColor = Color.Black;

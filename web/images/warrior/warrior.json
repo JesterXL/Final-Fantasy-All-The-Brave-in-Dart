@@ -2,59 +2,59 @@
 
 {
 	"filename": "warrior_1.png",
-	"frame": {"x":0,"y":0,"w":80,"h":80},
+	"frame": {"x":0,"y":0,"w":66,"h":66},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":80},
-	"sourceSize": {"w":80,"h":80}
+	"spriteSourceSize": {"x":0,"y":0,"w":66,"h":66},
+	"sourceSize": {"w":66,"h":66}
 },
 {
 	"filename": "warrior_2.png",
-	"frame": {"x":80,"y":0,"w":80,"h":80},
+	"frame": {"x":66,"y":0,"w":66,"h":66},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":80},
-	"sourceSize": {"w":80,"h":80}
+	"spriteSourceSize": {"x":0,"y":0,"w":66,"h":66},
+	"sourceSize": {"w":66,"h":66}
 },
 {
 	"filename": "warrior_3.png",
-	"frame": {"x":160,"y":0,"w":80,"h":80},
+	"frame": {"x":132,"y":0,"w":66,"h":66},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":80},
-	"sourceSize": {"w":80,"h":80}
+	"spriteSourceSize": {"x":0,"y":0,"w":66,"h":66},
+	"sourceSize": {"w":66,"h":66}
 },
 {
 	"filename": "warrior_4.png",
-	"frame": {"x":240,"y":0,"w":80,"h":80},
+	"frame": {"x":198,"y":0,"w":66,"h":66},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":80},
-	"sourceSize": {"w":80,"h":80}
+	"spriteSourceSize": {"x":0,"y":0,"w":66,"h":66},
+	"sourceSize": {"w":66,"h":66}
 },
 {
 	"filename": "warrior_5.png",
-	"frame": {"x":320,"y":0,"w":80,"h":80},
+	"frame": {"x":264,"y":0,"w":66,"h":66},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":80},
-	"sourceSize": {"w":80,"h":80}
+	"spriteSourceSize": {"x":0,"y":0,"w":66,"h":66},
+	"sourceSize": {"w":66,"h":66}
 },
 {
 	"filename": "warrior_6.png",
-	"frame": {"x":400,"y":0,"w":80,"h":80},
+	"frame": {"x":330,"y":0,"w":66,"h":66},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":80},
-	"sourceSize": {"w":80,"h":80}
+	"spriteSourceSize": {"x":0,"y":0,"w":66,"h":66},
+	"sourceSize": {"w":66,"h":66}
 }],
 "meta": {
 	"app": "http://www.codeandweb.com/texturepacker ",
 	"version": "1.0",
 	"image": "warrior.png",
 	"format": "RGBA8888",
-	"size": {"w":480,"h":80},
+	"size": {"w":396,"h":66},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:969f718e966eb01f10780b7253497e7a:406c11e9e1472c73fcc268881352b33b:380ec401ba9cf63cd4c0319d938fb695$"
+	"smartupdate": "$TexturePacker:SmartUpdate:bf14857bd5d4c0862ff7cf37b54e09eb:3c81e3a0cd34bccc71027a3ba34b0ae6:380ec401ba9cf63cd4c0319d938fb695$"
 }
 }

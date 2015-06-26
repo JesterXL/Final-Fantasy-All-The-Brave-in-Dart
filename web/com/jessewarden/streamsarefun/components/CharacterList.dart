@@ -104,7 +104,7 @@ class CharacterList extends DisplayObjectContainer
 					}
 					else
 					{
-						color = Color.Green;
+						color = Color.Lime;
 					}
 					_textDropper.addTextDrop(sheet, event.changeAmount, color: color);
 				}
