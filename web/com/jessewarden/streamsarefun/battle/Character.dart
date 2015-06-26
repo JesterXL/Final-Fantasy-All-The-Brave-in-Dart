@@ -128,10 +128,12 @@ class Character
 			_controller.add(new CharacterEvent(type: CharacterEvent.HIT_POINTS_CHANGED, target: this));
 			if(oldValue <= 0 && newValue >= 1)
 			{
+				dead = false;
 				_controller.add(new CharacterEvent(type: CharacterEvent.NO_LONGER_SWOON, target: this));
 			}
 			else if(oldValue >= 1 && newValue <= 0)
 			{
+				dead = true;
 				_controller.add(new CharacterEvent(type: CharacterEvent.SWOON, target: this));
 			}
 		}

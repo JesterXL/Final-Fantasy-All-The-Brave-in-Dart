@@ -9,6 +9,7 @@ import '../enums/enums.dart';
 import '../items/items.dart';
 import '../relics/relics.dart';
 import 'dart:mirrors';
+import 'package:jxlstatemachine/jxlstatemachine.dart';
 
 part 'BattleTimer.dart';
 part 'BattleTimerEvent.dart';

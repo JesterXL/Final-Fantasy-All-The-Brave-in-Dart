@@ -10,8 +10,12 @@ class Initiative
 
 	ObservableList<Player> get players => _players;
 	ObservableList<Monster> get monsters => _monsters;
-
+	StreamSubscription<BattleTimerEvent> timerSubscription;
 	Stream stream;
+
+	StateMachine _stateMachine;
+	StreamController _timerStreamController;
+	Stream _timerStream;
 
 	Initiative(this._gameLoopStream, this._players, this._monsters)
 	{
@@ -20,6 +24,7 @@ class Initiative
 
 	void init()
 	{
+
 		_streamController = new StreamController.broadcast();
 		stream = _streamController.stream;
 		List participants = new List();
@@ -37,14 +42,88 @@ class Initiative
 			list.forEach(addBattleTimerForCharacter);
 		});
 
+		_timerStreamController = new StreamController();
+		_timerStream = _timerStreamController.stream;
+		StreamSubscription<TimerEvent> sub = _timerStream.listen((TimerEvent event)
+		{
+			print("Initaitive::timerStream listen, event: ${event.type}");
+			switch(event.type)
+			{
+				case TimerEvent.PAUSE:
+					_stateMachine.changeState("paused");
+					break;
+
+				case TimerEvent.START:
+					_stateMachine.changeState("waiting");
+					break;
+
+				case TimerEvent.RESET_TIMER_FOR_CHARACTER:
+					_enableAndResetTimerForCharacter(event.character);
+					break;
+
+			}
+		});
+
+		_stateMachine = new StateMachine();
+		_stateMachine.addState(
+			"waiting",
+			enter: ()
+			{
+				sub.resume();
+			},
+			exit: ()
+			{
+				sub.pause();
+			}
+		);
+		_stateMachine.addState(
+			"paused",
+			enter: ()
+			{
+				_pause();
+				timerSubscription.pause();
+			},
+			exit: ()
+			{
+				_start();
+				timerSubscription.resume();
+			});
+		_stateMachine.changes.listen((StateMachineEvent event)
+		{
+			print("Initiative state change: ${_stateMachine.currentState.name}");
+		});
+		_stateMachine.initialState = 'waiting';
+
 		_streamController.add(new InitiativeEvent(InitiativeEvent.INITIALIZED));
+	}
+
+	void _enableAndResetTimerForCharacter(Character character)
+	{
+		TimerCharacterMap matched = _battleTimers.firstWhere((TimerCharacterMap map)
+		{
+			return map.character == character;
+		});
+		if(character.dead == false)
+		{
+			matched.battleTimer.enabled = true;
+			matched.battleTimer.reset();
+			if(_stateMachine.currentState.name == "waiting")
+			{
+				matched.battleTimer.start();
+			}
+		}
+	}
+
+	void resetCharacterTimer(Character character)
+	{
+		_timerStreamController.add(new TimerEvent(type: TimerEvent.RESET_TIMER_FOR_CHARACTER, character: character));
 	}
 
 	void addBattleTimerForCharacter(Character character)
 	{
 		String mode = getModeBasedOnType(character);
 		BattleTimer timer = new BattleTimer(_gameLoopStream, mode);
-		StreamSubscription<BattleTimerEvent> timerSubscription = timer.stream
+		timerSubscription = timer.stream
 		.listen((BattleTimerEvent event)
 		{
 			TimerCharacterMap matched = _battleTimers.firstWhere((TimerCharacterMap map)
@@ -53,8 +132,7 @@ class Initiative
 			});
 			if(event.type == BattleTimerEvent.COMPLETE)
 			{
-				// NOTE: pausing the BattleTimer, not the Stream listener... lol, streams!
-				matched.battleTimer.pause();
+				matched.battleTimer.enabled = false;
 				Character targetCharacter = matched.character;
 				if(targetCharacter is Player)
 				{
@@ -74,16 +152,6 @@ class Initiative
 			}
 		});
 
-		timer.stream
-		.where((BattleTimerEvent event)
-		{
-			return event.type == BattleTimerEvent.STARTED;
-		})
-		.listen((BattleTimerEvent event)
-		{
-			print("BattleTimer started.");
-		});
-
 		timer.speed = character.speed;
 
 		if(character is Player)
@@ -92,12 +160,15 @@ class Initiative
 			{
 				if(event.type == CharacterEvent.NO_LONGER_SWOON)
 				{
+					// TODO: ensure we're not in a paused state
+					timer.enabled = true;
 					timer.reset();
+					timer.start();
 				}
 
 				if(event.target.hitPoints <= 0)
 				{
-					timer.pause();
+					timer.enabled = false;
 				}
 			});
 			_battleTimers.add(new TimerCharacterMap(timer, timerSubscription, character, characterSubscription));
@@ -111,7 +182,7 @@ class Initiative
 			})
 			.listen((CharacterEvent event)
 			{
-				timer.pause();
+				timer.enabled = false;
 				removeBattleTimerForPlayer(event.target);
 			});
 			_battleTimers.add(new TimerCharacterMap(timer, timerSubscription, character, characterSubscription));
@@ -163,34 +234,31 @@ class Initiative
 		});
 	}
 
-	void reset()
+	void _pause()
 	{
-		_battleTimers.forEach((TimerCharacterMap object)
+		_battleTimers.forEach((TimerCharacterMap timerCharacterMap)
 		{
-			BattleTimer timer = object.battleTimer;
-			timer.reset();
-			timer.start();
+			timerCharacterMap.pause();
 		});
 	}
 
 	void pause()
 	{
-		_battleTimers.forEach((TimerCharacterMap object)
+		_timerStreamController.add(new TimerEvent(type: TimerEvent.PAUSE));
+	}
+
+	void _start()
+	{
+		_battleTimers.forEach((TimerCharacterMap timerCharacterMap)
 		{
-			BattleTimer timer = object.battleTimer;
-			timer.pause();
+			timerCharacterMap.resume();
 		});
 	}
 
 	void start()
 	{
-		_battleTimers.forEach((TimerCharacterMap object)
-		{
-			BattleTimer timer = object.battleTimer;
-			print("is timer enabled?: ${timer.enabled}");
-			print("is timer running?: ${timer.running}");
-			timer.start();
-		});
+		_stateMachine.changeState("waiting");
+		_timerStreamController.add(new TimerEvent(type: TimerEvent.START));
 	}
 
 	void onDeath(Character character)
@@ -237,6 +305,35 @@ class TimerCharacterMap
 
 	TimerCharacterMap(this.battleTimer, this.battleTimerSubscription, this.character, this.characterSubscription)
 	{
+	}
 
+	void pause()
+	{
+		battleTimer.pause();
+		battleTimerSubscription.pause();
+		characterSubscription.pause();
+	}
+
+	void resume()
+	{
+		battleTimer.start();
+		battleTimerSubscription.resume();
+		characterSubscription.resume();
+	}
+
+}
+
+class TimerEvent
+{
+	String type;
+	Character character;
+	BattleTimer timer;
+
+	static const String PAUSE = "pause";
+	static const String START = "start";
+	static const String RESET_TIMER_FOR_CHARACTER = "reset";
+
+	TimerEvent({String this.type, Character this.character})
+	{
 	}
 }

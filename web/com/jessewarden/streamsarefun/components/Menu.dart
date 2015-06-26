@@ -31,6 +31,7 @@ class Menu extends DisplayObjectContainer
 
 	List<Sprite> hitAreas;
 	Stream stream;
+	StreamSubscription sub;
 
 	Menu(num this._width, num this._height, ObservableList<MenuItem> this._menuItems){
 		createChildren();
@@ -53,7 +54,7 @@ class Menu extends DisplayObjectContainer
 
 	void init()
 	{
-		onMouseClick.where((MouseEvent event)
+		sub = onMouseClick.where((MouseEvent event)
 		{
 			return event.target is Sprite;
 		})
@@ -67,6 +68,16 @@ class Menu extends DisplayObjectContainer
 		stream = _controller.stream;
 	}
 
+	void destroy()
+	{
+		sub.cancel();
+		sub = null;
+		if(_streamSubscription != null)
+		{
+			_streamSubscription.cancel();
+			_streamSubscription = null;
+		}
+	}
 
 	TextField getTextField()
 	{

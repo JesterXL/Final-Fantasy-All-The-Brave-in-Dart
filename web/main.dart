@@ -47,6 +47,7 @@ void main()
 //	test();
 	testBasicAttack();
 //	testBattleController();
+//testingMultipleEventStream();
 
 }
 
@@ -504,10 +505,18 @@ void testBasicAttack()
 	GameLoop loop = new GameLoop();
 	loop.start();
 
+	int getRandomSpeed()
+	{
+		int result = BattleUtils.getRandomNumberFromRange(20, 80);
+		print("result: $result");
+		return result;
+//		new Random().nextInt(10);
+	}
+
 	ObservableList<Player> players = new ObservableList<Player>();
-	players.add(new Player(characterType: Player.WARRIOR, name: 'Locke'));
-	players.add(new Player(characterType: Player.WARRIOR, name: 'Celes'));
-	players.add(new Player(characterType: Player.WARRIOR, name: 'Sabin'));
+	players.add(new Player(characterType: Player.WARRIOR, name: 'Locke', speed: getRandomSpeed()));
+	players.add(new Player(characterType: Player.WARRIOR, name: 'Celes', speed: getRandomSpeed()));
+	players.add(new Player(characterType: Player.WARRIOR, name: 'Sabin', speed: getRandomSpeed()));
 
 	ObservableList<Monster> monsters = new ObservableList<Monster>();
 	monsters.add(new Monster(Monster.GOBLIN));
@@ -600,33 +609,28 @@ void testBasicAttack()
 				);
 //				print("attacking target: $target");
 				print("targetHitResult: ${targetHitResult.damage}");
-				battleStateMachine.changeState('characterActing');
+				Character lastCharacter = actingPlayer;
+				new Future.delayed(new Duration(seconds: 2), ()
+				{
+					print("actingPlayer's timer getting reset: $lastCharacter");
+					initiative.resetCharacterTimer(lastCharacter);
+				});
+				battleStateMachine.changeState('waiting');
 
 			});
 			battleMenu.show();
 		},
 		exit: ()
 		{
-			// TODO: This instance needs to be kept so when animation is done, we can reset his timer.
-			// Maybe I should just put on the Character/Player object, and create his own state machine...
 			actingPlayer = null;
 			battleMenuStreamSubscription.cancel();
 		}
 	);
-	battleStateMachine.addState('characterActing',
-		enter: ()
-		{
-			new Future.delayed(new Duration(seconds: 1), ()
-			{
-//				print("Done acting, changing...");
-				battleStateMachine.changeState('waiting');
-			});
-		});
 	battleStateMachine.addState('win');
 	battleStateMachine.addState('lost');
 	battleStateMachine.changes.listen((StateMachineEvent event)
 	{
-		print("state change: ${battleStateMachine.currentState.name}");
+		print("battleStateMachine state change: ${battleStateMachine.currentState.name}");
 	});
 	battleStateMachine.initialState = 'loading';
 
@@ -660,4 +664,24 @@ void testBattleController()
 	Initiative initiative = new Initiative(loop.stream, players, monsters);
 	BattleController battleController = new BattleController(initiative);
 
+}
+
+void testingMultipleEventStream()
+{
+	var one = new StreamController();
+	one.stream.listen((_)
+	{
+		print("stream listen: $_");
+	});
+	one.stream.where((_)
+	{
+		return _ == "tres";
+	})
+	.listen((_)
+	{
+		print("where: $_");
+	});
+	one.add("uno");
+	one.add("dos");
+	one.add("tres");
 }

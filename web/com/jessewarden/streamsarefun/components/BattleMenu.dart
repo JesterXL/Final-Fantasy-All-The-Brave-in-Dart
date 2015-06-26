@@ -53,7 +53,66 @@ class BattleMenu
 
 		fsm = new StateMachine();
 
-		StreamSubscription streamSubscription = cursorManager.stream
+		StreamSubscription streamSubscription;
+
+		fsm.addState('hide',
+		enter: ()
+		{
+			mainMenu.removeFromParent();
+			defendMenu.removeFromParent();
+			rowMenu.removeFromParent();
+			cursorManager.clearAllTargets();
+			if(streamSubscription != null)
+			{
+				streamSubscription.cancel();
+				streamSubscription = null;
+			}
+			stage.focus = null;
+		});
+
+		fsm.addState("main",
+		enter: ()
+		{
+			stage.addChild(mainMenu);
+			cursorManager.setTargets(mainMenu.hitAreas);
+			if (streamSubscription == null)
+			{
+				streamSubscription = getCursorManagerStreamSubscription();
+			}
+			stage.focus = stage;
+		});
+		fsm.addState("defense", from: ["main"],
+		enter: ()
+		{
+			stage.addChild(defendMenu);
+			cursorManager.setTargets(defendMenu.hitAreas);
+		},
+		exit: ()
+		{
+			stage.removeChild(defendMenu);
+		});
+		fsm.addState("row", from: ["main"],
+		enter: ()
+		{
+			stage.addChild(rowMenu);
+			cursorManager.setTargets(rowMenu.hitAreas);
+		},
+		exit: ()
+		{
+			stage.removeChild(rowMenu);
+		});
+
+
+		resourceManager.load()
+		.then((_)
+		{
+			fsm.initialState = 'hide';
+		});
+	}
+
+	StreamSubscription getCursorManagerStreamSubscription()
+	{
+		return cursorManager.stream
 		.listen((CursorFocusManagerEvent event)
 		{
 			String currentState = fsm.currentState.name;
@@ -102,54 +161,10 @@ class BattleMenu
 					break;
 			}
 		});
-
-		fsm.addState('hide',
-		enter: ()
-		{
-			mainMenu.removeFromParent();
-			defendMenu.removeFromParent();
-			rowMenu.removeFromParent();
-			cursorManager.clearAllTargets();
-		});
-
-		fsm.addState("main",
-		enter: ()
-		{
-			stage.addChild(mainMenu);
-			cursorManager.setTargets(mainMenu.hitAreas);
-		});
-		fsm.addState("defense", from: ["main"],
-		enter: ()
-		{
-			stage.addChild(defendMenu);
-			cursorManager.setTargets(defendMenu.hitAreas);
-		},
-		exit: ()
-		{
-			stage.removeChild(defendMenu);
-		});
-		fsm.addState("row", from: ["main"],
-		enter: ()
-		{
-			stage.addChild(rowMenu);
-			cursorManager.setTargets(rowMenu.hitAreas);
-		},
-		exit: ()
-		{
-			stage.removeChild(rowMenu);
-		});
-
-
-		resourceManager.load()
-		.then((_)
-		{
-			fsm.initialState = 'hide';
-		});
 	}
 
 	void show()
 	{
-		stage.focus = stage;
 		fsm.changeState("main");
 	}
 
