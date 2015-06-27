@@ -26,7 +26,7 @@ void main()
 	canvas = querySelector('#stage');
 	canvas.context2D.imageSmoothingEnabled = true;
 
-	stage = new Stage(canvas, webGL: false);
+	stage = new Stage(canvas);
 	renderLoop = new RenderLoop();
 	renderLoop.addStage(stage);
 
@@ -45,9 +45,10 @@ void main()
 //testInitiativeAndBattleMenu();
 //testingMerge();
 //	test();
-	testBasicAttack();
+//	testBasicAttack();
 //	testBattleController();
 //testingMultipleEventStream();
+testJuggler();
 
 }
 
@@ -753,4 +754,22 @@ void testingMultipleEventStream()
 	one.add("uno");
 	one.add("dos");
 	one.add("tres");
+}
+
+void testJuggler()
+{
+	Juggler juggler = renderLoop.juggler;
+
+	void run() async
+	{
+		await for (var elapsedTime in juggler.onElapsedTimeChange) {
+			print(elapsedTime);
+		}
+	}
+
+	run();
+	new Future.delayed(new Duration(seconds: 2), ()
+	{
+		renderLoop.stop();
+	});
 }
