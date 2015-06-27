@@ -570,6 +570,9 @@ class BattleUtils
 			);
 		}
 
+		damage = damage.clamp(-9999, 9999);
+		damage = damage.round();
+
 		// TODO: support attacking mulitple targets
 		return new TargetHitResult(
 			criticalHit: criticalHit,
