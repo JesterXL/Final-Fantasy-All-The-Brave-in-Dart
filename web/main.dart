@@ -525,14 +525,15 @@ void testBasicAttack()
 	);
 	player1.battlePower = 40;
 	player1.defense = 85;
-	player1.evade = 0.15;
+	player1.evade = 15;
 	player1.magicDefense = 49;
-	player1.magicBlock = 0.02;
+	player1.magicBlock = 20;
 	player1.vigor = 37;
 	player1.stamina = 31;
 	player1.magicPower = 28;
 	player1.level = 7;
 	player1.hitPoints = 144;
+	player1.hitRate = 180;
 
 	players.add(player1);
 //	players.add(new Player(characterType: Player.WARRIOR, name: 'Celes', speed: getRandomSpeed()));
@@ -611,7 +612,26 @@ void testBasicAttack()
 								event.character,
 								targetStamina: target.stamina
 							);
-							target.hitPoints = target.hitPoints - targetHitResult.damage;
+							monsterList.attacking(event.character);
+							if(targetHitResult.hit == true)
+							{
+								if(target is Player)
+								{
+									characterList.hit(target);
+								}
+								target.hitPoints = target.hitPoints - targetHitResult.damage;
+							}
+							else
+							{
+								if(target is Player)
+								{
+									characterList.miss(target);
+								}
+								else if(target is Monster)
+								{
+									monsterList.miss(target);
+								}
+							}
 							print("Monster targetHitResult: ${targetHitResult.damage}");
 							break;
 

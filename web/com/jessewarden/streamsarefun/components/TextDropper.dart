@@ -10,7 +10,7 @@ class TextDropper
 	{
 	}
 
-	void addTextDrop(DisplayObject target, int value, {int color: Color.White})
+	void addTextDrop(DisplayObject target, int value, {int color: Color.White, bool miss: false})
 	{
 		TextField field = _getField();
 		_stage.addChild(field);
@@ -20,7 +20,14 @@ class TextDropper
 		field.y = point.y + target.height - field.height;
 //		field.border = true;
 //		field.borderColor = Color.Green;
-		field.text = value.abs().toString();
+		if(miss == false)
+		{
+			field.text = value.abs().toString();
+		}
+		else
+		{
+			field.text = "MISS";
+		}
 //		print("color: $color");
 		field.defaultTextFormat.color = color;
 

@@ -14,6 +14,7 @@ class Character
 	int defense = 1;
 	int magicDefense = 1;
 	int battlePower = 1;
+	int hitRate = 100;
 
 	bool dead = false;
 	int level = 1;

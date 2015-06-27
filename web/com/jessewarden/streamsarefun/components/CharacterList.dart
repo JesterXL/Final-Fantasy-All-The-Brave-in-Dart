@@ -7,6 +7,7 @@ class CharacterList extends DisplayObjectContainer
 	ResourceManager resourceManager;
 	Stage stage;
 	RenderLoop renderLoop;
+	Map<SpriteSheet, Player> spriteCharacterMap = new Map<SpriteSheet, Player>();
 
 	TextDropper _textDropper;
 
@@ -83,6 +84,7 @@ class CharacterList extends DisplayObjectContainer
 
 			// create sprite
 			SpriteSheet sheet = getSpriteSheetForPlayerCharacterType(player);
+			spriteCharacterMap[sheet] = player;
 			addChild(sheet);
 			sheet.init();
 			sheet.x = startXPlayer;
@@ -109,6 +111,33 @@ class CharacterList extends DisplayObjectContainer
 					_textDropper.addTextDrop(sheet, event.changeAmount, color: color);
 				}
 			});
+		});
+	}
+
+	void miss(Player targetPlayer)
+	{
+		spriteCharacterMap.forEach((SpriteSheet key, Player player)
+		{
+			if(player == targetPlayer)
+			{
+				_textDropper.addTextDrop(key, 0, color: Color.White, miss: true);
+			}
+		});
+	}
+
+	void hit(Player targetPlayer)
+	{
+		spriteCharacterMap.forEach((SpriteSheet key, Player player)
+		{
+			if(player == targetPlayer)
+			{
+				var oldCycle = key.currentCycle;
+				key.hit();
+				new Future.delayed(new Duration(milliseconds: 600), ()
+				{
+					key.currentCycle = oldCycle;
+				});
+			}
 		});
 	}
 

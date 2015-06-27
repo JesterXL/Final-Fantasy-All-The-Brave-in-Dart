@@ -7,6 +7,7 @@ class MonsterList extends DisplayObjectContainer
 	ResourceManager resourceManager;
 	Stage stage;
 	RenderLoop renderLoop;
+	Map<Bitmap, Monster> spriteCharacterMap = new Map<Bitmap, Monster>();
 
 	TextDropper _textDropper;
 
@@ -47,6 +48,7 @@ class MonsterList extends DisplayObjectContainer
 
 			// create sprite
 			Bitmap bitmap = new Bitmap(getBitmapForMonsterType(monster));
+			spriteCharacterMap[bitmap] = monster;
 			addChild(bitmap);
 			bitmap.x = startXMonster;
 			bitmap.y = startYMonster;
@@ -70,6 +72,61 @@ class MonsterList extends DisplayObjectContainer
 				}
 			});
 		});
+	}
+
+	void miss(Monster targetMonster)
+	{
+		spriteCharacterMap.forEach((Bitmap key, Monster monster)
+		{
+			if(monster == targetMonster)
+			{
+				_textDropper.addTextDrop(key, 0, color: Color.White, miss: true);
+			}
+		});
+	}
+
+	void attacking(Monster targetMonster)
+	{
+		Bitmap bitmap;
+		spriteCharacterMap.forEach((Bitmap key, Monster monster)
+		{
+			if(monster == targetMonster)
+			{
+				bitmap = key;
+			}
+		});
+//		bitmap.filters = [new ColorMatrixFilter.grayscale()];
+
+		renderLoop.juggler.addChain([
+			_getGrayTween(bitmap, 0),
+			_getResetTween(bitmap, 0.05),
+			_getGrayTween(bitmap, 0.05),
+			_getResetTween(bitmap, 0.05),
+			_getGrayTween(bitmap, 0.05),
+			_getResetTween(bitmap, 0.05)
+		]);
+	}
+
+	Tween _getGrayTween(DisplayObject displayObject, num time)
+	{
+		var tween = new Tween(displayObject, time);
+		tween.onComplete = ()
+		{
+			displayObject.filters = [new ColorMatrixFilter.invert()];
+			displayObject.applyCache(-20, -20, displayObject.width.round() + 20, displayObject.height.round() + 20);
+		};
+		return tween;
+	}
+
+	Tween _getResetTween(DisplayObject displayObject, num time)
+	{
+		var tween = new Tween(displayObject, time);
+		tween.onComplete = ()
+		{
+			displayObject.filters = [];
+			displayObject.applyCache(-20, -20, displayObject.width.round() + 20, displayObject.height.round() + 20);
+		};
+		return tween;
 	}
 
 	BitmapData getBitmapForMonsterType(Monster monster)
