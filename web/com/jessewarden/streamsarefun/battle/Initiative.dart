@@ -170,6 +170,11 @@ class Initiative
 				{
 					timer.enabled = false;
 				}
+
+				if(event.type == CharacterEvent.SWOON)
+				{
+					onDeath(event);
+				}
 			});
 			_battleTimers.add(new TimerCharacterMap(timer, timerSubscription, character, characterSubscription));
 		}
@@ -184,6 +189,7 @@ class Initiative
 			{
 				timer.enabled = false;
 				removeBattleTimerForPlayer(event.target);
+				onDeath(event);
 			});
 			_battleTimers.add(new TimerCharacterMap(timer, timerSubscription, character, characterSubscription));
 		}
@@ -263,12 +269,6 @@ class Initiative
 
 	void onDeath(Character character)
 	{
-		TimerCharacterMap hash = _battleTimers.firstWhere((TimerCharacterMap object)
-		{
-			return object.character == character;
-		});
-		BattleTimer characterTimer = hash.battleTimer;
-		characterTimer.pause();
 		bool allMonstersDead = monsters.every((Monster monster)
 		{
 			return monster.dead;

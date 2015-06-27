@@ -100,8 +100,11 @@ class BattleTimer
 
 	void stopListenToGameLoop()
 	{
-		_gameLoopStreamSubscription.cancel();
-		_gameLoopStreamSubscription = null;
+		if(_gameLoopStreamSubscription != null)
+		{
+			_gameLoopStreamSubscription.cancel();
+			_gameLoopStreamSubscription = null;
+		}
 	}
 
 	bool start()

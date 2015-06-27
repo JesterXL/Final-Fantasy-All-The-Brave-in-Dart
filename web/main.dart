@@ -518,14 +518,37 @@ void testBasicAttack()
 	}
 
 	ObservableList<Player> players = new ObservableList<Player>();
-	players.add(new Player(characterType: Player.WARRIOR, name: 'Locke', speed: getRandomSpeed()));
-	players.add(new Player(characterType: Player.WARRIOR, name: 'Celes', speed: getRandomSpeed()));
-	players.add(new Player(characterType: Player.WARRIOR, name: 'Sabin', speed: getRandomSpeed()));
+	Player player1 = new Player(
+		characterType: Player.WARRIOR,
+		name: 'Locke',
+		speed: getRandomSpeed()
+	);
+	player1.battlePower = 40;
+	player1.defense = 85;
+	player1.evade = 0.15;
+	player1.magicDefense = 49;
+	player1.magicBlock = 0.02;
+	player1.vigor = 37;
+	player1.stamina = 31;
+	player1.magicPower = 28;
+	player1.level = 7;
+	player1.hitPoints = 144;
+
+	players.add(player1);
+//	players.add(new Player(characterType: Player.WARRIOR, name: 'Celes', speed: getRandomSpeed()));
+//	players.add(new Player(characterType: Player.WARRIOR, name: 'Sabin', speed: getRandomSpeed()));
 
 	ObservableList<Monster> monsters = new ObservableList<Monster>();
-	monsters.add(new Monster(Monster.LEAFER));
-	monsters.add(new Monster(Monster.LEAFER));
-	monsters.add(new Monster(Monster.LEAFER));
+	Monster monster1 = new Monster(Monster.ARENEID);
+	monster1.hitPoints = 87;
+	monster1.battlePower = 20;
+	monster1.magicPower = 10;
+	monster1.speed = 30;
+	monster1.defense = 80;
+	monster1.magicDefense = 135;
+	monster1.evade = 0;
+	monster1.magicBlock = 0;
+	monsters.add(monster1);
 
 	Initiative initiative = new Initiative(loop.stream, players, monsters);
 	StreamSubscription sub;
@@ -591,6 +614,15 @@ void testBasicAttack()
 							target.hitPoints = target.hitPoints - targetHitResult.damage;
 							print("Monster targetHitResult: ${targetHitResult.damage}");
 							break;
+
+						case InitiativeEvent.LOST:
+							print("****************** LOST ******************");
+							break;
+
+						case InitiativeEvent.WON:
+							print("****************** WON ******************");
+							break;
+
 
 					}
 
