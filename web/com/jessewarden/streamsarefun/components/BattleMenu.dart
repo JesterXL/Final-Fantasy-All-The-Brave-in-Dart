@@ -35,7 +35,7 @@ class BattleMenu
 
 		mainMenu = new Menu(300, 280, mainMenuItems);
 		mainMenu.x = 20;
-		mainMenu.y = 20;
+		mainMenu.y = 200;
 
 		defendMenuItems = new ObservableList<MenuItem>();
 		defendMenuItems.add(new MenuItem("Defend"));

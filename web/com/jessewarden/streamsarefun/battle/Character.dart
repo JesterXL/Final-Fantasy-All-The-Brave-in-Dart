@@ -126,7 +126,7 @@ class Character
 			_controller.add(new CharacterEvent(
 				type: CharacterEvent.HIT_POINTS_CHANGED,
 				target: this,
-				changeAmount: oldValue - newValue));
+				changeAmount: newValue - oldValue));
 			if(oldValue <= 0 && newValue >= 1)
 			{
 				dead = false;

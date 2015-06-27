@@ -20,7 +20,7 @@ class TextDropper
 		field.y = point.y + target.height - field.height;
 //		field.border = true;
 //		field.borderColor = Color.Green;
-		field.text = value.toString();
+		field.text = value.abs().toString();
 //		print("color: $color");
 		field.defaultTextFormat.color = color;
 
