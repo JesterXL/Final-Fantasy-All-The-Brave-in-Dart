@@ -3,13 +3,12 @@ library battlecore;
 import 'dart:core';
 import 'dart:async';
 import 'dart:math';
-import '../core/streamscore.dart';
 import 'package:observe/observe.dart';
 import '../enums/enums.dart';
 import '../items/items.dart';
 import '../relics/relics.dart';
-import 'dart:mirrors';
 import 'package:jxlstatemachine/jxlstatemachine.dart';
+import 'package:stagexl/stagexl.dart';
 
 part 'BattleTimer.dart';
 part 'BattleTimerEvent.dart';

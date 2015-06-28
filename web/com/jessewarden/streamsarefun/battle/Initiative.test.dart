@@ -3,7 +3,6 @@ library initiativetests;
 import "package:test/test.dart";
 import 'package:observe/observe.dart';
 import 'battlecore.dart';
-import '../core/streamscore.dart';
 import 'package:frappe/frappe.dart';
 import 'dart:async';
 

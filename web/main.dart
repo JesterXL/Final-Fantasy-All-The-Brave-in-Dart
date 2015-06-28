@@ -7,7 +7,6 @@ import 'package:observe/observe.dart';
 //import 'package:frappe/frappe.dart';
 import 'package:jxlstatemachine/jxlstatemachine.dart';
 
-import 'com/jessewarden/streamsarefun/core/streamscore.dart';
 import 'com/jessewarden/streamsarefun/battle/battlecore.dart';
 import 'com/jessewarden/streamsarefun/components/components.dart';
 import 'com/jessewarden/streamsarefun/sprites/sprites.dart';
@@ -37,6 +36,7 @@ void main()
 //  testBattleTimer();
 //	testTextDropper();
 //	testBattleTimerBar();
+	testBattleTimerBars();
 //	testInitiative();
 //	testMath();
 //	testWarriorSprite();
@@ -48,8 +48,8 @@ void main()
 //	testBasicAttack();
 //	testBattleController();
 //testingMultipleEventStream();
-testJuggler();
-
+//testJuggler();
+//testWait();
 }
 
 
@@ -72,10 +72,7 @@ void testGameLoop()
 
 void testBattleTimer()
 {
-	GameLoop gameLoop = new GameLoop();
-	BattleTimer timer = new BattleTimer(gameLoop.stream, BattleTimer.MODE_PLAYER);
-	gameLoop.start();
-	timer.start();
+	BattleTimer timer = new BattleTimer(BattleTimer.MODE_PLAYER);
 	timer.stream
 	.where((BattleTimerEvent event)
 	{
@@ -85,10 +82,11 @@ void testBattleTimer()
 	{
 		print("percent: ${event.percentage}");
 	});
+	stage.renderLoop.juggler.add(timer);
 
 	new Future.delayed(new Duration(milliseconds: 300), ()
 	{
-		gameLoop.pause();
+		stage.renderLoop.juggler.remove(timer);
 	});
 }
 
@@ -128,24 +126,63 @@ void testTextDropper()
 
 void testBattleTimerBar()
 {
-	BattleTimerBar bar = new BattleTimerBar( new RenderLoop());
+	Juggler juggler = new Juggler();
+
+	BattleTimerBar bar = new BattleTimerBar(juggler);
 	stage.addChild(bar);
 	bar.x = 20;
 	bar.y = 20;
 
-	GameLoop gameLoop = new GameLoop();
-	BattleTimer timer = new BattleTimer(gameLoop.stream, BattleTimer.MODE_PLAYER);
-	gameLoop.start();
-	timer.start();
+	BattleTimer timer = new BattleTimer(BattleTimer.MODE_PLAYER);
 	timer.stream
-	.where((BattleTimerEvent event)
-	{
-		return event.type == BattleTimerEvent.PROGRESS;
-	})
 	.listen((BattleTimerEvent event)
 	{
 		bar.percentage = event.percentage;
+		print("bar.percentage: ${bar.percentage}");
 	});
+	juggler.add(timer);
+	stage.renderLoop.juggler.add(juggler);
+}
+
+void testBattleTimerBars()
+{
+	Juggler juggler = new Juggler();
+
+	BattleTimerBar getBattleTimerBar(num x, num y)
+	{
+		BattleTimerBar bar = new BattleTimerBar(juggler);
+		stage.addChild(bar);
+		bar.x = x;
+		bar.y = y;
+		return bar;
+	}
+
+	BattleTimer getBattleTimer(BattleTimerBar bar)
+	{
+		BattleTimer timer = new BattleTimer(BattleTimer.MODE_PLAYER);
+		timer.stream
+		.listen((BattleTimerEvent event)
+		{
+			bar.percentage = event.percentage;
+		});
+		timer.speed = BattleUtils.getRandomNumberFromRange(80, 100);
+		juggler.add(timer);
+		return timer;
+	}
+
+	var bars = new List(100);
+	bars.fillRange(0, 100, 0);
+	var index = 1;
+	bars = bars.map((_)
+	{
+		return getBattleTimerBar(20, 20 * index++);
+	});
+	bars.forEach((bar)
+	{
+		getBattleTimer(bar);
+	});
+
+	stage.renderLoop.juggler.add(juggler);
 }
 
 void testInitiative()
@@ -771,5 +808,35 @@ void testJuggler()
 	new Future.delayed(new Duration(seconds: 2), ()
 	{
 		renderLoop.stop();
+	});
+}
+
+void testWait1()
+{
+	StreamController con = new StreamController();
+	void run() async
+	{
+		await for(num number in con.stream)
+		{
+			print("number: $number");
+		}
+	}
+	run();
+	new Timer.periodic(new Duration(seconds: 1), (Timer timer)
+	{
+		con.add(new Random().nextInt(10));
+	});
+}
+
+void testWait2()
+{
+	StreamController con = new StreamController();
+	con.stream.listen((num number)
+	{
+		print("number: $number");
+	});
+	new Timer.periodic(new Duration(seconds: 1), (Timer timer)
+	{
+		con.add(new Random().nextInt(10));
 	});
 }

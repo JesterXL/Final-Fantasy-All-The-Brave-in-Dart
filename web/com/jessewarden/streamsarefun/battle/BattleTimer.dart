@@ -1,6 +1,6 @@
 part of battlecore;
 
-class BattleTimer
+class BattleTimer implements Animatable
 {
 	static const String MODE_PLAYER = "player";
 	static const String MODE_MONSTER = "monster";
@@ -18,34 +18,37 @@ class BattleTimer
 	int battleSpeed = 3;
 	int effect = EFFECT_NORMAL;
 	String _mode = null;
+	StateMachine fsm;
 
 	int gauge = 0;
 	Function modeFunction = null;
-	bool _enabled = true;
-	bool running = false;
 
 	StreamController<BattleTimerEvent> _streamController;
 	Stream<BattleTimerEvent> stream;
-	Stream<GameLoopEvent> _gameLoopStream;
-	StreamSubscription _gameLoopStreamSubscription;
 
 	num get progress
 	=> gauge / MAX;
 
-	bool get enabled
-	=> _enabled;
-
-	void set enabled(bool newValue)
-	{
-		_enabled = newValue;
-		if (_enabled == false)
-		{
-			pause();
-		}
-	}
-
 	String get mode
 	=> _mode;
+
+	bool _enabled = true;
+	bool get enabled => _enabled;
+	bool set enabled(bool newValue)
+	{
+		if(_enabled != newValue)
+		{
+			_enabled = newValue;
+			if(newValue == true)
+			{
+				fsm.changeState('active');
+			}
+			else
+			{
+				fsm.changeState('disabled');
+			}
+		}
+	}
 
 	void set mode(String newValue)
 	{
@@ -59,139 +62,93 @@ class BattleTimer
 		}
 	}
 
-	BattleTimer(Stream<GameLoopEvent> _gameLoopStream, String mode)
+	BattleTimer(String mode)
 	{
-		_streamController = new StreamController<BattleTimerEvent>(onPause: _onPause, onResume: _onResume);
-		stream = _streamController.stream;
-		this._gameLoopStream = _gameLoopStream;
 		this.mode = mode;
-	}
 
-	void _onPause()
-	{
-		pause();
-	}
+		_streamController = new StreamController.broadcast();
+		stream = _streamController.stream;
 
-	void _onResume()
-	{
-		start();
-	}
-
-	void startListenToGameLoop()
-	{
-		if (_gameLoopStreamSubscription == null)
-		{
-			_gameLoopStreamSubscription = _gameLoopStream
-			.where((GameLoopEvent event)
-			{
-				return event.type == GameLoopEvent.TICK;
-			})
-			.handleError((Error error)
-			{
-				print("BattleTimer, startListenToGameLoop, error: " + error.toString());
-			})
-			.listen((GameLoopEvent event)
-			{
-				tick(event.time);
-			});
-
-		}
-	}
-
-	void stopListenToGameLoop()
-	{
-		if(_gameLoopStreamSubscription != null)
-		{
-			_gameLoopStreamSubscription.cancel();
-			_gameLoopStreamSubscription = null;
-		}
-	}
-
-	bool start()
-	{
-		if (enabled == false)
-		{
-			return false;
-		}
-		if (running == false)
-		{
-			running = true;
-			startListenToGameLoop();
-			_streamController.add(new BattleTimerEvent(BattleTimerEvent.STARTED, this));
-		}
-		return true;
-	}
-
-	void pause()
-	{
-		if (running)
-		{
-			running = false;
-			stopListenToGameLoop();
-			_streamController.add(new BattleTimerEvent(BattleTimerEvent.PAUSED, this));
-		}
+		fsm = new StateMachine();
+		fsm.addState('active');
+		fsm.addState('complete');
+		fsm.addState('disabled');
+		fsm.initialState = 'active';
 	}
 
 	void reset()
 	{
-		pause();
 		gauge = 0;
 		lastTick = 0;
-		_streamController.add(new BattleTimerEvent(BattleTimerEvent.RESET, this));
 	}
 
-	void tick(num time)
+	bool advanceTime(num time)
+	{
+		switch(fsm.currentState.name)
+		{
+			case 'active':
+				return _advanceActiveTime(time);
+
+			case 'complete':
+				return false;
+
+			case 'disabled':
+				return true;
+		}
+	}
+
+	bool _advanceActiveTime(num time)
 	{
 		Function modeFunc = modeFunction;
 		if (modeFunc == null)
 		{
-			return;
+			return false;
 		}
 
-		lastTick = lastTick + time.round();
-		int result = (lastTick / TIME_SLICE).floor();
+		bool tickResult = false;
+		lastTick = lastTick + time;
+//		print("time: $time, lastTick: $lastTick");
+		var result1 = (lastTick / TIME_SLICE);
+//		print("lastTick / TIME_SLICE: $result1");
+		int result = (lastTick / TIME_SLICE);
+//		print("result: $result");
 		if (result > 0)
 		{
 			num remainder = lastTick - (result * TIME_SLICE);
 			lastTick = remainder;
 			// TODO: if someone pauses this while running modeFunc
-			// we should respect this... this should be a Stream
-			// so we can respect subscriber control
 			while (result > 0)
 			{
-				modeFunc();
+				tickResult = modeFunc();
 				result--;
 			}
 			num percentage = gauge / MAX;
-//			print("gauge: $gauge, MAX: $MAX, percentage: $percentage");
-//			print("---percentage: $percentage");
+//			print("percentage: $percentage");
 			if (percentage == null)
 			{
 				throw "This can't be null home slice dice mice thrice lice kites... kites doesn't rhyme.";
 			}
 			_streamController.add(new BattleTimerEvent(BattleTimerEvent.PROGRESS, this, percentage: percentage));
+			return tickResult;
 		}
+		return true;
 	}
 
-	void dispose()
+	bool onCharacterTick()
 	{
-		running = false;
-		stopListenToGameLoop();
+		num result = (((effect * (speed + 20)) / 16));
+		gauge += result.round();
+		if (gauge >= MAX)
+		{
+			gauge = MAX;
+			_streamController.add(new BattleTimerEvent(BattleTimerEvent.COMPLETE, this));
+			return false;
+		}
+		return true;
 	}
-
-void onCharacterTick()
-{
-	num result = (((effect * (speed + 20)) / 16));
-	gauge += result.round();
-	if (gauge >= MAX)
-	{
-		gauge = MAX;
-		_streamController.add(new BattleTimerEvent(BattleTimerEvent.COMPLETE, this));
-	}
-}
 
 	// ((96 * (Speed + 20)) * (255 - ((Battle Speed - 1) * 24))) / 16
-	void onMonsterTick()
+	bool onMonsterTick()
 	{
 		/* 2nd try and I still failed, lol! I think home slice has like a * where he meant to have a /... andyway,
 		I cannot for the life of me get a reasonable value from this calculation.
@@ -215,6 +172,8 @@ void onCharacterTick()
 			// dispatch complete
 			gauge = MAX;
 			_streamController.add(new BattleTimerEvent(BattleTimerEvent.COMPLETE, this));
+			return false;
 		}
+		return true;
 	}
 }

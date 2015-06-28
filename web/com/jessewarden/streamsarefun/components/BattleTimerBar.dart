@@ -9,8 +9,8 @@ class BattleTimerBar extends DisplayObjectContainer
 	bool percentageDirty = false;
 	StateMachine fsm;
 	AnimationChain flash;
-	RenderLoop renderLoop;
 	bool flashDirty = false;
+	Juggler juggler;
 
 	static const num ROUND = 8;
 	static const int WIDTH = 70;
@@ -41,7 +41,7 @@ class BattleTimerBar extends DisplayObjectContainer
 		}
 	}
 
-	BattleTimerBar(this.renderLoop)
+	BattleTimerBar(this.juggler)
 	{
 		init();
 	}
@@ -73,23 +73,23 @@ class BattleTimerBar extends DisplayObjectContainer
 		{
 			flash = new AnimationChain();
 			const SPEED = 0.05;
-			flash.add(new Tween(green, SPEED, TransitionFunction.linear)
+			flash.add(new Tween(green, SPEED, Transition.linear)
 				..onStart = () => fsm.changeState("readyWhite"));
-			flash.add(new Tween(green, SPEED, TransitionFunction.linear)
+			flash.add(new Tween(green, SPEED, Transition.linear)
 				..onStart = () => fsm.changeState("readyGold"));
-			flash.add(new Tween(green, SPEED, TransitionFunction.linear)
+			flash.add(new Tween(green, SPEED, Transition.linear)
 				..onStart = () => fsm.changeState("readyWhite"));
-			flash.add(new Tween(green, SPEED, TransitionFunction.linear)
+			flash.add(new Tween(green, SPEED, Transition.linear)
 				..onStart = () => fsm.changeState("readyGold"));
-			flash.add(new Tween(green, SPEED, TransitionFunction.linear)
+			flash.add(new Tween(green, SPEED, Transition.linear)
 				..onStart = () => fsm.changeState("readyWhite"));
-			flash.add(new Tween(green, SPEED, TransitionFunction.linear)
+			flash.add(new Tween(green, SPEED, Transition.linear)
 				..onStart = () => fsm.changeState("readyGold"));
-			flash.add(new Tween(green, SPEED, TransitionFunction.linear)
+			flash.add(new Tween(green, SPEED, Transition.linear)
 				..onStart = () => fsm.changeState("readyWhite"));
-			flash.add(new Tween(green, SPEED, TransitionFunction.linear)
+			flash.add(new Tween(green, SPEED, Transition.linear)
 				..onStart = () => fsm.changeState("idle"));
-			renderLoop.juggler.add(flash);
+			juggler.add(flash);
 		});
 		fsm.addState("readyWhite",
 		enter: ()

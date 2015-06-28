@@ -2,7 +2,6 @@ library battletimertest;
 
 import "package:test/test.dart";
 import 'battlecore.dart';
-import '../core/streamscore.dart';
 
 
 void main() {

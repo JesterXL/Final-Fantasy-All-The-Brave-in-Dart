@@ -2,7 +2,6 @@ library battlecontrollertests;
 
 import "package:test/test.dart";
 import 'battlecore.dart';
-import '../core/streamscore.dart';
 import 'package:observe/observe.dart';
 
 void main()
