@@ -129,7 +129,7 @@ class Character
 	}
 
 	BattleState _battleState;
-	int _hitPoints = 0;
+	int _hitPoints = 10;
 
 	int get hitPoints => _hitPoints;
 	void set hitPoints(int newValue)
@@ -196,7 +196,7 @@ class Character
 	          int this.stamina: 10,
 	          int this.magicBlock: 10,
 				Row row: Row.FRONT,
-				int hitPoints: 0,
+				int hitPoints: 10,
 	          int this.defense: 10,
 	          bool this.dead: false,
 	          int this.level: 3})

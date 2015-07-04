@@ -38,31 +38,31 @@ class CharacterList extends DisplayObjectContainer
 
 		initiative.players.forEach((Player player)
 		{
-//			// create name
-//			TextField nameField = new TextField();
-//			nameField.defaultTextFormat = new TextFormat('Final Fantasy VI SNESa', 36, Color.Black);
-//			nameField.text = player.characterType;
-//			nameField.x = startXName;
-//			nameField.y = startYName - 40 + 15;
-//			nameField.width = 200;
-//			nameField.height = 40;
-//			startYName += 24;
-//			nameField.wordWrap = false;
-//			nameField.multiline = false;
-//			addChild(nameField);
-//
-//			// create name
-//			TextField hitPointsField = new TextField();
-//			hitPointsField.defaultTextFormat = new TextFormat('Final Fantasy VI SNESa', 36, Color.Black);
-//			hitPointsField.text = player.hitPoints.toString();
-//			hitPointsField.x = startXHitPoints;
-//			hitPointsField.y = startYHitPoints - 40 + 15;
-//			hitPointsField.width = 200;
-//			hitPointsField.height = 40;
-//			startYHitPoints += 24;
-//			hitPointsField.wordWrap = false;
-//			hitPointsField.multiline = false;
-//			addChild(hitPointsField);
+			// create name
+			TextField nameField = new TextField();
+			nameField.defaultTextFormat = new TextFormat('Final Fantasy VI SNESa', 36, Color.Black);
+			nameField.text = player.characterType;
+			nameField.x = startXName;
+			nameField.y = startYName - 40 + 15;
+			nameField.width = 200;
+			nameField.height = 40;
+			startYName += 24;
+			nameField.wordWrap = false;
+			nameField.multiline = false;
+			addChild(nameField);
+
+			// create name
+			TextField hitPointsField = new TextField();
+			hitPointsField.defaultTextFormat = new TextFormat('Final Fantasy VI SNESa', 36, Color.Black);
+			hitPointsField.text = player.hitPoints.toString();
+			hitPointsField.x = startXHitPoints;
+			hitPointsField.y = startYHitPoints - 40 + 15;
+			hitPointsField.width = 200;
+			hitPointsField.height = 40;
+			startYHitPoints += 24;
+			hitPointsField.wordWrap = false;
+			hitPointsField.multiline = false;
+			addChild(hitPointsField);
 
 			// create bar
 			BattleTimerBar bar = new BattleTimerBar(juggler);
@@ -74,13 +74,16 @@ class CharacterList extends DisplayObjectContainer
 			.where((event)
 			{
 				return event is BattleTimerEvent &&
-				event.type == BattleTimerEvent.PROGRESS &&
 				event.character == player;
 			})
 			.listen((event)
 			{
 				BattleTimerEvent battleTimerEvent = event as BattleTimerEvent;
 				bar.percentage = battleTimerEvent.percentage;
+				if(event.type == BattleTimerEvent.COMPLETE)
+				{
+					bar.percentage = 1;
+				}
 			});
 
 			// create sprite
@@ -99,7 +102,7 @@ class CharacterList extends DisplayObjectContainer
 			{
 				if(event.type == CharacterEvent.HIT_POINTS_CHANGED)
 				{
-					//hitPointsField.text = event.target.hitPoints.toString();
+					hitPointsField.text = event.target.hitPoints.toString();
 					int color;
 					if(event.changeAmount < 0)
 					{
@@ -110,6 +113,13 @@ class CharacterList extends DisplayObjectContainer
 						color = Color.Lime;
 					}
 					_textDropper.addTextDrop(sheet, event.changeAmount, color: color);
+				}
+
+				if(event.type == CharacterEvent.SWOON)
+				{
+					var sheet = getSpriteSheetFromPlayer(player);
+					// TODO: not everyone has a hurt sprite, nor do they implement an interface for me to set
+					sheet.hurt();
 				}
 			});
 		});
@@ -134,6 +144,7 @@ class CharacterList extends DisplayObjectContainer
 			if(player == targetPlayer)
 			{
 				var oldCycle = key.currentCycle;
+				print("oldCycle: $oldCycle");
 				key.hit();
 				var tween = new Tween(key, 0.6);
 				tween.onComplete = ()
@@ -147,17 +158,17 @@ class CharacterList extends DisplayObjectContainer
 		return completer.future;
 	}
 
-	Bitmap getBitmapFromPlayer(Player targetPlayer)
+	Bitmap getSpriteSheetFromPlayer(Player targetPlayer)
 	{
-		Bitmap bitmap;
-		spriteCharacterMap.forEach((Bitmap key, Player player)
+		SpriteSheet spriteSheet;
+		spriteCharacterMap.forEach((SpriteSheet key, Player player)
 		{
 			if(player == targetPlayer)
 			{
-				bitmap = key;
+				spriteSheet = key;
 			}
 		});
-		return bitmap;
+		return spriteSheet;
 	}
 
 //	void attacking(Player targetPlayer, Character targetToAttack) async

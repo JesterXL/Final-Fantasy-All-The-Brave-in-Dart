@@ -66,11 +66,13 @@ class Initiative
 			Character targetCharacter = matched.character;
 			if(targetCharacter is Player)
 			{
+				print("Player Ready");
 				_streamController.add(new InitiativeEvent(InitiativeEvent.PLAYER_READY,
 				character: targetCharacter));
 			}
 			else
 			{
+				print("Monster Ready");
 				_streamController.add(new InitiativeEvent(InitiativeEvent.MONSTER_READY,
 				character: targetCharacter));
 			}

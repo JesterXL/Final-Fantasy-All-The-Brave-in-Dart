@@ -46,7 +46,7 @@ class IntentQueue implements Animatable
 	{
 		if(_intents.length > 0)
 		{
-			_currentIntent = _intents.first;
+			_currentIntent = _intents.removeAt(0);
 			processIntent(_currentIntent);
 		}
 	}

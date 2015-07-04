@@ -105,12 +105,12 @@ class BattleTimer implements Animatable
 		bool tickResult = false;
 		lastTick = lastTick + time;
 		int result = (lastTick / TIME_SLICE);
-		if(mode == MODE_MONSTER)
-		{
-			print("================");
-			print("time: $time, lastTick: $lastTick");
-			print("lastTick / TIME_SLICE: $result");
-		}
+//		if(mode == MODE_MONSTER)
+//		{
+//			print("================");
+//			print("time: $time, lastTick: $lastTick");
+//			print("lastTick / TIME_SLICE: $result");
+//		}
 		if (result > 0)
 		{
 			num remainder = lastTick - (result * TIME_SLICE);

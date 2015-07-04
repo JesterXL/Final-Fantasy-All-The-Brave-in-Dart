@@ -38,14 +38,14 @@ void main()
 	//testGameLoop();
 //  testBattleTimer();
 //	testTextDropper();
-	testBattleTimerBar();
+//	testBattleTimerBar();
 //	testBattleTimerBars();
 //	testInitiative();
 //	testMath();
 //	testWarriorSprite();
 //	testCharacterList();
 //	testBattleMenu();
-//testInitiativeAndBattleMenu();
+	testBasicAttack();
 //testingMerge();
 //	test();
 //	testBasicAttack();
@@ -60,6 +60,7 @@ void main()
 //testCursorManagerMonsterList();
 //testFixtures();
 //	testBasicAttack();
+//testRandomListShuffle();
 }
 
 
@@ -504,46 +505,6 @@ void testBattleMenu()
 	{
 		battleMenu.show();
 	});
-
-}
-
-void testInitiativeAndBattleMenu()
-{
-	resourceManager.addSound("menuBeep", "audio/menu-beep.mp3");
-	var juggler = Fixtures.getJugglerAndAddToStage(stage);
-
-	ObservableList<Player> players = Fixtures.getPlayerList();
-
-	ObservableList<Monster> monsters = new ObservableList<Monster>();
-	monsters.add(new Monster(Monster.LEAFER));
-	monsters.add(new Monster(Monster.LEAFER));
-	monsters.add(new Monster(Monster.LEAFER));
-
-	Initiative initiative = new Initiative(juggler, players, monsters);
-	StreamSubscription sub;
-
-	BattleMenu battleMenu = new BattleMenu(resourceManager, cursorManager, stage);
-	battleMenu.stream
-	.listen((BattleMenuEvent event)
-	{
-		sub.resume();
-	});
-
-	resourceManager.load()
-	.then((_)
-	{
-		sub = initiative.stream.listen((event)
-		{
-			print("event: ${event.type}");
-
-			if(event.type == InitiativeEvent.PLAYER_READY)
-			{
-				print("character: ${event.character}");
-				sub.pause();
-				battleMenu.show();
-			}
-		});
-	});
 }
 
 void testBasicAttack()
@@ -578,9 +539,23 @@ void testBasicAttack()
 	Character getRandomTarget(ObservableList<Character> targets)
 	{
 		List copy = targets.toList();
-		Random random = new Random(copy.length - 1);
+		copy = copy.map((Character character)
+		{
+			if(character.dead == false)
+			{
+				return character;
+			}
+		}).toList();
+		Random random = new Random();
 		copy.shuffle(random);
-		return copy[0];
+		if(copy.length > 0)
+		{
+			return copy[0];
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	var streamSubscription;
@@ -924,4 +899,13 @@ void testCursorManagerMonsterList()
 		monsterList.init();
 		battleMenu.show();
 	});
+}
+
+void testRandomListShuffle()
+{
+	var list = ["one", "two", "three"];
+	List copy = list.toList();
+	Random random = new Random();
+	copy.shuffle(random);
+	print("copy: ${copy[0]}");
 }

@@ -37,9 +37,11 @@ class BattleMenu
 		mainMenuItems.add(new MenuItem("Attack"));
 		mainMenuItems.add(new MenuItem("Items"));
 
+		var startY = 400;
+
 		mainMenu = new Menu(300, 280, mainMenuItems);
 		mainMenu.x = 20;
-		mainMenu.y = 200;
+		mainMenu.y = startY;
 
 		defendMenuItems = new ObservableList<MenuItem>();
 		defendMenuItems.add(new MenuItem("Defend"));
