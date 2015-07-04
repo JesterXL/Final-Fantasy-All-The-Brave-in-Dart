@@ -11,12 +11,15 @@ import 'com/jessewarden/streamsarefun/battle/battlecore.dart';
 import 'com/jessewarden/streamsarefun/components/components.dart';
 import 'com/jessewarden/streamsarefun/sprites/sprites.dart';
 import 'com/jessewarden/streamsarefun/managers/managers.dart';
+import 'Fixtures.dart';
 
 CanvasElement canvas;
 Stage stage;
 RenderLoop renderLoop;
 ResourceManager resourceManager;
 CursorFocusManager cursorManager;
+
+
 
 void main()
 {
@@ -25,7 +28,9 @@ void main()
 	canvas = querySelector('#stage');
 	canvas.context2D.imageSmoothingEnabled = true;
 
-	stage = new Stage(canvas);
+	StageOptions options = new StageOptions();
+	options.renderEngine = RenderEngine.Canvas2D;
+	stage = new Stage(canvas, width: 3000, height: 3000, options: options);
 	renderLoop = new RenderLoop();
 	renderLoop.addStage(stage);
 
@@ -36,7 +41,7 @@ void main()
 //  testBattleTimer();
 //	testTextDropper();
 //	testBattleTimerBar();
-	testBattleTimerBars();
+//	testBattleTimerBars();
 //	testInitiative();
 //	testMath();
 //	testWarriorSprite();
@@ -50,6 +55,19 @@ void main()
 //testingMultipleEventStream();
 //testJuggler();
 //testWait();
+//	testIntentQueue();
+//testAsyncTweens();
+//	testAsyncTweens2();
+//testAwaitStreams();
+testCursorManagerMonsterList();
+//testFixtures();
+}
+
+
+void testFixtures()
+{
+	var player = Fixtures.getLockeLevel7();
+	print("player: $player");
 }
 
 
@@ -187,8 +205,7 @@ void testBattleTimerBars()
 
 void testInitiative()
 {
-	GameLoop loop = new GameLoop();
-	loop.start();
+	Juggler juggler = new Juggler();
 
 	ObservableList<Player> players = new ObservableList<Player>();
 	players.add(new Player(characterType: Player.WARRIOR));
@@ -196,22 +213,25 @@ void testInitiative()
 	players.add(new Player(characterType: Player.WARRIOR));
 
 	ObservableList<Monster> monsters = new ObservableList<Monster>();
-	monsters.add(new Monster(Monster.GOBLIN));
-	monsters.add(new Monster(Monster.GOBLIN));
-	monsters.add(new Monster(Monster.GOBLIN));
+	monsters.add(new Monster(Monster.LEAFER));
+	monsters.add(new Monster(Monster.LEAFER));
+	monsters.add(new Monster(Monster.LEAFER));
 
-	Initiative initiative = new Initiative(loop.stream, players, monsters);
-	StreamSubscription sub;
-	sub = initiative.stream.listen((event)
+	Initiative initiative = new Initiative(players, monsters, juggler);
+	initiative.stream.listen((event)
 	{
 		print("event: ${event.type}");
 
 		if(event.type == InitiativeEvent.PLAYER_READY)
 		{
 			print("character: ${event.character}");
-			sub.pause();
+			stage.renderLoop.juggler.remove(juggler);
 		}
 	});
+	initiative.start();
+
+	stage.renderLoop.juggler.add(juggler);
+
 //	.onError((error)
 //	{
 //		print("Initiative's error: $error");
@@ -237,14 +257,6 @@ void testMath()
 
 void testWarriorSprite()
 {
-	Stage stage = new Stage(querySelector('#stage'), webGL: true);
-	stage.scaleMode = StageScaleMode.SHOW_ALL;
-	stage.align = StageAlign.NONE;
-
-	RenderLoop renderLoop = new RenderLoop();
-	ResourceManager resourceManager = new ResourceManager();
-
-	renderLoop.addStage(stage);
 	Juggler juggler = renderLoop.juggler;
 
 	WarriorSprite warrior = new WarriorSprite(resourceManager);
@@ -288,25 +300,25 @@ void testWarriorSprite()
 			warrior.attack();
 
 			var acWarrior = new AnimationChain();
-			acWarrior.add(new Tween(warrior, 0.5, TransitionFunction.linear)..animate.x.to(20));
-			acWarrior.add(new Tween(warrior, 0.5, TransitionFunction.linear)..animate.x.to(100));
+			acWarrior.add(new Tween(warrior, 0.5, Transition.linear)..animate.x.to(20));
+			acWarrior.add(new Tween(warrior, 0.5, Transition.linear)..animate.x.to(100));
 
 			var acBlackMage = new AnimationChain();
-			acBlackMage.add(new Tween(blackMage, 0.5, TransitionFunction.linear)..animate.x.to(20)..onComplete = () => blackMage.attack());
-			acBlackMage.add(new Tween(blackMage, 0.5, TransitionFunction.linear)
+			acBlackMage.add(new Tween(blackMage, 0.5, Transition.linear)..animate.x.to(20)..onComplete = () => blackMage.attack());
+			acBlackMage.add(new Tween(blackMage, 0.5, Transition.linear)
 				..animate.x.to(100)
 				..delay = 0.5
 				..onStart = () => blackMage.ready());
 
 			var acThief = new AnimationChain();
-			acThief.add(new Tween(thief, 0.5, TransitionFunction.easeInExponential)..animate.x.to(400)
+			acThief.add(new Tween(thief, 0.5, Transition.easeInExponential)..animate.x.to(400)
 				..onComplete = ()
 				{
 					thief.attack();
 					thief.x = -40;
 				});
-			acThief.add(new Tween(thief, 0.4, TransitionFunction.linear)..animate.x.to(20)..onComplete = () => thief.ready());
-			acThief.add(new Tween(thief, 0.5, TransitionFunction.easeInOutExponential)
+			acThief.add(new Tween(thief, 0.4, Transition.linear)..animate.x.to(20)..onComplete = () => thief.ready());
+			acThief.add(new Tween(thief, 0.5, Transition.easeInOutExponential)
 				..animate.x.to(100));
 
 			juggler.add(acWarrior);
@@ -330,25 +342,20 @@ void testWarriorSprite()
 
 void testCharacterList()
 {
-	Shape border = new Shape();
-	border.graphics.rect(0, 0, 480, 420);
-	border.graphics.strokeColor(Color.Black);
-	stage.addChild(border);
-
-	GameLoop loop = new GameLoop();
-	loop.start();
+	Juggler juggler = new Juggler();
+	stage.renderLoop.juggler.add(juggler);
 
 	ObservableList<Player> players = new ObservableList<Player>();
-	players.add(new Player(Player.WARRIOR));
-	players.add(new Player(Player.BLACK_MAGE));
-	players.add(new Player(Player.THIEF));
+	players.add(new Player(characterType: Player.WARRIOR));
+	players.add(new Player(characterType: Player.BLACK_MAGE));
+	players.add(new Player(characterType: Player.THIEF));
 
 	ObservableList<Monster> monsters = new ObservableList<Monster>();
-	monsters.add(new Monster(Monster.GOBLIN));
-	monsters.add(new Monster(Monster.GOBLIN));
-	monsters.add(new Monster(Monster.GOBLIN));
+	monsters.add(new Monster(Monster.LEAFER));
+	monsters.add(new Monster(Monster.LEAFER));
+	monsters.add(new Monster(Monster.LEAFER));
 
-	Initiative initiative = new Initiative(loop.stream, players, monsters);
+	Initiative initiative = new Initiative(juggler, players, monsters);
 	initiative.stream.where((event)
 	{
 		return event is InitiativeEvent &&
@@ -416,7 +423,7 @@ void testCharacterList()
 		characterList = new CharacterList(initiative: initiative,
 		resourceManager: resourceManager,
 		stage: stage,
-		renderLoop: renderLoop);
+		juggler: juggler);
 		stage.addChild(characterList);
 		characterList.init();
 
@@ -440,21 +447,21 @@ void testCharacterList()
 		var sound = resourceManager.getSound("battleTheme");
 		var soundChannel = sound.play(true, soundTransform);
 
-		var tween = new Tween(fadeShapeScreen, 0.8, TransitionFunction.easeOutExponential);
+		var tween = new Tween(fadeShapeScreen, 0.8, Transition.easeOutExponential);
 		tween.animate.alpha.to(0);
 		tween.onComplete = ()
 		=> fadeShapeScreen.removeFromParent();
 
 		const double TINT_FADE_TIME = 1.0;
 
-		var topTintTween = new Tween(topTint, TINT_FADE_TIME, TransitionFunction.easeOutExponential);
+		var topTintTween = new Tween(topTint, TINT_FADE_TIME, Transition.easeOutExponential);
 		topTintTween.animate.alpha.to(0);
 		topTintTween.animate.y.to(-200);
 		topTintTween.delay = 0.1;
 		topTintTween.onComplete = ()
 		=> topTint.removeFromParent();
 
-		var bottomTintTween = new Tween(bottomTint, TINT_FADE_TIME, TransitionFunction.easeOutExponential);
+		var bottomTintTween = new Tween(bottomTint, TINT_FADE_TIME, Transition.easeOutExponential);
 		bottomTintTween.animate.alpha.to(0);
 		bottomTintTween.animate.y.to(294);
 		bottomTintTween.delay = 0.1;
@@ -464,6 +471,8 @@ void testCharacterList()
 		stage.setChildIndex(fadeShapeScreen, stage.numChildren - 1);
 
 		renderLoop.juggler.addGroup([tween, topTintTween, bottomTintTween]);
+
+		initiative.start();
 	});
 }
 
@@ -495,8 +504,8 @@ void testInitiativeAndBattleMenu()
 	resourceManager.addSound("menuBeep", "audio/menu-beep.mp3");
 	CursorFocusManager cursorManager = new CursorFocusManager(stage, resourceManager);
 
-	GameLoop loop = new GameLoop();
-	loop.start();
+	Juggler juggler = new Juggler();
+	stage.renderLoop.juggler.add(juggler);
 
 	ObservableList<Player> players = new ObservableList<Player>();
 	players.add(new Player(Player.WARRIOR));
@@ -508,7 +517,7 @@ void testInitiativeAndBattleMenu()
 	monsters.add(new Monster(Monster.LEAFER));
 	monsters.add(new Monster(Monster.LEAFER));
 
-	Initiative initiative = new Initiative(loop.stream, players, monsters);
+	Initiative initiative = new Initiative(juggler, players, monsters);
 	StreamSubscription sub;
 
 	BattleMenu battleMenu = new BattleMenu(resourceManager, cursorManager, stage);
@@ -540,88 +549,49 @@ void testBasicAttack()
 	resourceManager.addSound("menuBeep", "audio/menu-beep.mp3");
 	CursorFocusManager cursorManager = new CursorFocusManager(stage, resourceManager);
 
-	GameLoop loop = new GameLoop();
-	loop.start();
-
-	int getRandomSpeed()
-	{
-//		int min = 20;
-//		int max = 80;
-		int min = 80;
-		int max = 100;
-		int result = BattleUtils.getRandomNumberFromRange(min, max);
-		print("result: $result");
-		return result;
-//		new Random().nextInt(10);
-	}
+	Juggler juggler = new Juggler();
+	stage.renderLoop.juggler.add(juggler);
 
 	ObservableList<Player> players = new ObservableList<Player>();
-	Player player1 = new Player(
-		characterType: Player.WARRIOR,
-		name: 'Locke',
-		speed: getRandomSpeed()
-	);
-	player1.battlePower = 40;
-	player1.defense = 85;
-	player1.evade = 15;
-	player1.magicDefense = 49;
-	player1.magicBlock = 20;
-	player1.vigor = 37;
-	player1.stamina = 31;
-	player1.magicPower = 28;
-	player1.level = 7;
-	player1.hitPoints = 144;
-	player1.hitRate = 180;
+	Player player1 = Fixtures.getLockeLevel7();
 
 	players.add(player1);
 //	players.add(new Player(characterType: Player.WARRIOR, name: 'Celes', speed: getRandomSpeed()));
 //	players.add(new Player(characterType: Player.WARRIOR, name: 'Sabin', speed: getRandomSpeed()));
 
 	ObservableList<Monster> monsters = new ObservableList<Monster>();
-	Monster monster1 = new Monster(Monster.ARENEID);
-	monster1.hitPoints = 87;
-	monster1.battlePower = 20;
-	monster1.magicPower = 10;
-	monster1.speed = 30;
-	monster1.defense = 80;
-	monster1.magicDefense = 135;
-	monster1.evade = 0;
-	monster1.magicBlock = 0;
+	Monster monster1 = Fixtures.getAreneid();
 	monsters.add(monster1);
 
-	Initiative initiative = new Initiative(loop.stream, players, monsters);
-	StreamSubscription sub;
-
+	Initiative initiative = new Initiative(juggler, players, monsters);
 	BattleMenu battleMenu = new BattleMenu(resourceManager, cursorManager, stage);
-
-	Character getRandomTarget(ObservableList<Character> targets)
-	{
-		List copy = targets.toList();
-		Random random = new Random(copy.length - 1);
-		copy.shuffle(random);
-		return copy[0];
-	}
-
 	CharacterList characterList = new CharacterList(
 		initiative: initiative,
 		resourceManager: resourceManager,
-		stage: stage,
-		renderLoop: renderLoop
+		juggler: juggler,
+		stage: stage
 	);
 	stage.addChild(characterList);
 
 	MonsterList monsterList = new MonsterList(
 		initiative: initiative,
 		resourceManager: resourceManager,
-		stage: stage,
-		renderLoop: renderLoop
+		juggler: juggler,
+		stage: stage
 	);
 	stage.addChild(monsterList);
 
-	StreamSubscription streamSubscription;
-	StreamSubscription battleMenuStreamSubscription;
-	Player actingPlayer;
+	IntentQueue queue = new IntentQueue(juggler, initiative, characterList, monsterList);
+	juggler.add(queue);
+	queue.stream.listen((Intent completedIntent)
+	{
+		initiative.resetCharacterTimer(completedIntent.attacker);
+	});
 
+	var streamSubscription;
+	var battleMenuStreamSubscription;
+	var actingPlayer;
+	// TODO: gotta make a queue of these actions
 	StateMachine battleStateMachine = new StateMachine();
 	battleStateMachine.addState('loading');
 	battleStateMachine.addState('waiting',
@@ -639,38 +609,18 @@ void testBasicAttack()
 					switch(event.type)
 					{
 						case InitiativeEvent.PLAYER_READY:
-							print('${event.character.name} is ready.');
 							actingPlayer = event.character;
 							battleStateMachine.changeState('characterChoosing');
 							break;
 
 						case InitiativeEvent.MONSTER_READY:
 							Character target = getRandomTarget(players);
-							TargetHitResult targetHitResult = BattleUtils.getHitAndApplyDamage(
-								event.character,
-								targetStamina: target.stamina
-							);
-							monsterList.attacking(event.character);
-							if(targetHitResult.hit == true)
-							{
-								if(target is Player)
-								{
-									characterList.hit(target);
-								}
-								target.hitPoints = target.hitPoints - targetHitResult.damage;
-							}
-							else
-							{
-								if(target is Player)
-								{
-									characterList.miss(target);
-								}
-								else if(target is Monster)
-								{
-									monsterList.miss(target);
-								}
-							}
-							print("Monster targetHitResult: ${targetHitResult.damage}");
+							var intent = new Intent();
+							intent.attacker = event.character;
+							intent.targets = [target];
+							intent.isPhysicalAttack = true;
+							intent.hitRate = event.character.hitRate;
+							queue.addIntent(intent);
 							break;
 
 						case InitiativeEvent.LOST:
@@ -688,13 +638,13 @@ void testBasicAttack()
 			}
 			else
 			{
-				initiative.start();
+//				initiative.start();
 			}
 		},
 
 		exit: ()
 		{
-			initiative.pause();
+//			initiative.pause();
 		}
 	);
 	battleStateMachine.addState('characterChoosing',
@@ -714,11 +664,8 @@ void testBasicAttack()
 				print("targetHitResult: ${targetHitResult.damage}");
 				Character lastCharacter = actingPlayer;
 				target.hitPoints = target.hitPoints - targetHitResult.damage;
-				new Future.delayed(new Duration(seconds: 2), ()
-				{
-					print("actingPlayer's timer getting reset: $lastCharacter");
-					initiative.resetCharacterTimer(lastCharacter);
-				});
+				print("actingPlayer's timer getting reset: $lastCharacter");
+				initiative.resetCharacterTimer(lastCharacter);
 				battleStateMachine.changeState('waiting');
 
 			});
@@ -750,6 +697,7 @@ void testBasicAttack()
 		battleStateMachine.initialState = 'waiting';
 		characterList.init();
 		monsterList.init();
+		initiative.start();
 	});
 }
 
@@ -838,5 +786,157 @@ void testWait2()
 	new Timer.periodic(new Duration(seconds: 1), (Timer timer)
 	{
 		con.add(new Random().nextInt(10));
+	});
+}
+
+void testIntentQueue()
+{
+	var juggler = new Juggler();
+	var queue = new IntentQueue(juggler);
+	stage.renderLoop.juggler.add(juggler);
+	juggler.add(queue);
+	queue.stream.listen((_)
+	{
+		print("event: $_");
+	});
+	queue.addIntent(new Intent());
+}
+
+void testAsyncTweens()
+{
+	Future doThreeTweens()
+	{
+		var completer = new Completer();
+		var chain = stage.renderLoop.juggler.addChain([
+			new Tween(stage, 1),
+			new Tween(stage, 1),
+			new Tween(stage, 1)
+		]);
+		chain.onComplete = ()
+		{
+			print("All 3 tweens completed, calling completer.complete...");
+			completer.complete(true);
+		};
+		return completer.future;
+	}
+	print("Calling...");
+	doThreeTweens().then((_)
+	{
+		print("Future complete: $_");
+	});
+	print("After Future then.");
+}
+
+void testAsyncTweens2() async
+{
+	Future doThreeTweens()
+	{
+		var completer = new Completer();
+		var chain = stage.renderLoop.juggler.addChain([
+			new Tween(stage, 1),
+			new Tween(stage, 1),
+			new Tween(stage, 1)
+		]);
+		chain.onComplete = ()
+		{
+			print("All 3 tweens completed, calling completer.complete...");
+			completer.complete(true);
+		};
+		return completer.future;
+	}
+	print("Calling...");
+	var result = await doThreeTweens();
+	print("result: $result");
+	print("After Future then.");
+}
+
+void testAwaitStreams() async
+{
+	print("testAwaitStreams");
+	var controller = new StreamController();
+	var stream = controller.stream;
+	void bunchOfStuff() async
+	{
+		new Future.delayed(new Duration(seconds: 1), ()
+		{
+			print("1");
+			controller.add(1);
+		})
+		.then((_)
+		{
+			return new Future.delayed(new Duration(seconds: 1), ()
+			{
+				print("2");
+				controller.add(2);
+			});
+		});
+	}
+
+	bunchOfStuff();
+	await for (var i in stream)
+	{
+		print('i $i');
+	}
+}
+
+void testCursorManagerMonsterList()
+{
+	var juggler = new Juggler();
+	stage.renderLoop.juggler.add(juggler);
+
+	ObservableList<Player> players = new ObservableList<Player>();
+	Player player1 = Fixtures.getLockeLevel7();
+	players.add(player1);
+
+	ObservableList<Monster> monsters = new ObservableList<Monster>();
+	Monster monster1 = Fixtures.getAreneid();
+	monsters.add(monster1);
+
+	Initiative initiative = new Initiative(stage.renderLoop.juggler, players, monsters);
+
+	CharacterList characterList = new CharacterList(
+		initiative: initiative,
+		resourceManager: resourceManager,
+		juggler: juggler,
+		stage: stage
+	);
+	stage.addChild(characterList);
+
+	MonsterList monsterList = new MonsterList(
+		initiative: initiative,
+		resourceManager: resourceManager,
+		juggler: juggler,
+		stage: stage
+	);
+	stage.addChild(monsterList);
+
+	BattleMenu battleMenu = new BattleMenu(resourceManager, cursorManager, stage, monsterList, characterList);
+
+	IntentQueue queue = new IntentQueue(juggler, initiative, characterList, monsterList);
+	juggler.add(queue);
+	queue.stream.listen((Intent completedIntent)
+	{
+		initiative.resetCharacterTimer(completedIntent.attacker);
+	});
+
+	battleMenu.stream
+	.listen((BattleMenuEvent event)
+	{
+		print("event: $event");
+
+	});
+
+	resourceManager.addTextureAtlas('warrior', 'images/warrior/warrior.json', TextureAtlasFormat.JSONARRAY);
+	resourceManager.addTextureAtlas('blackmage', 'images/blackmage/blackmage.json', TextureAtlasFormat.JSONARRAY);
+	resourceManager.addTextureAtlas('thief', 'images/thief/thief.json', TextureAtlasFormat.JSONARRAY);
+	resourceManager.addBitmapData("Leafer", "images/monsters/leafer.png");
+	resourceManager.addBitmapData("Areneid", "images/monsters/areneid.png");
+
+	resourceManager.load()
+	.then((_)
+	{
+		characterList.init();
+		monsterList.init();
+		battleMenu.show();
 	});
 }

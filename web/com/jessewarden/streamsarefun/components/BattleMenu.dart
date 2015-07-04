@@ -14,12 +14,16 @@ class BattleMenu
 	CursorFocusManager cursorManager;
 	Stage stage;
 	StreamController _controller;
+	CharacterList characterList;
+	MonsterList monsterList;
 
 	Stream stream;
 
 	BattleMenu(ResourceManager this.resourceManager,
 	           CursorFocusManager this.cursorManager,
-	           Stage this.stage)
+	           Stage this.stage,
+				MonsterList this.monsterList,
+				CharacterList this.characterList)
 	{
 		init();
 	}
@@ -101,6 +105,21 @@ class BattleMenu
 		{
 			stage.removeChild(rowMenu);
 		});
+		fsm.addState("attackTarget", from: ["main"],
+		enter: ()
+		{
+			if(streamSubscription != null)
+			{
+				streamSubscription.cancel();
+			}
+			streamSubscription = getCursorManagerStreamSubscriptionForAttackTargets();
+			cursorManager.setTargets(monsterList.children);
+		},
+		exit: ()
+		{
+			streamSubscription.cancel();
+			streamSubscription = null;
+		});
 
 
 		resourceManager.load()
@@ -146,6 +165,11 @@ class BattleMenu
 					{
 						case "main":
 							selectedItem = mainMenuItems[cursorManager.selectedIndex].name;
+							if(selectedItem == "Attack")
+							{
+								fsm.changeState("attackTarget");
+								return;
+							}
 							break;
 
 						case "defense":
@@ -160,6 +184,20 @@ class BattleMenu
 					_controller.add(new BattleMenuEvent(BattleMenuEvent.ITEM_SELECTED, selectedItem));
 					break;
 			}
+		});
+	}
+
+	StreamSubscription getCursorManagerStreamSubscriptionForAttackTargets()
+	{
+		return cursorManager.stream
+		.where((event)
+		{
+			return event.type == CursorFocusManagerEvent.SELECTED;
+		})
+		.listen((CursorFocusManagerEvent event)
+		{
+			fsm.changeState('hide');
+			_controller.add(new BattleMenuEvent(BattleMenuEvent.ITEM_SELECTED, selectedItem));
 		});
 	}
 

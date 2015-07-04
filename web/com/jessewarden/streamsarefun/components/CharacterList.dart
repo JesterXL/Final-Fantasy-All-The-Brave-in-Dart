@@ -6,21 +6,23 @@ class CharacterList extends DisplayObjectContainer
 	Initiative initiative;
 	ResourceManager resourceManager;
 	Stage stage;
-	RenderLoop renderLoop;
+	Juggler juggler;
 	Map<SpriteSheet, Player> spriteCharacterMap = new Map<SpriteSheet, Player>();
 
 	TextDropper _textDropper;
 
 	CharacterList({Initiative this.initiative,
 	              ResourceManager this.resourceManager,
-	              Stage this.stage,
-	              RenderLoop this.renderLoop})
+	              Juggler juggler,
+					Stage stage})
 	{
+		this.juggler = juggler;
+		this.stage = stage;
 	}
 
 	void init()
 	{
-		_textDropper = new TextDropper(stage, renderLoop);
+		_textDropper = new TextDropper(stage, juggler);
 
 		num startXBar = 374;
 		num startYBar = 154;
@@ -63,7 +65,7 @@ class CharacterList extends DisplayObjectContainer
 //			addChild(hitPointsField);
 
 			// create bar
-			BattleTimerBar bar = new BattleTimerBar(renderLoop);
+			BattleTimerBar bar = new BattleTimerBar(juggler);
 			addChild(bar);
 			bar.x = startXBar;
 			bar.y = startYBar;
@@ -77,8 +79,8 @@ class CharacterList extends DisplayObjectContainer
 			})
 			.listen((event)
 			{
-
 				BattleTimerEvent battleTimerEvent = event as BattleTimerEvent;
+				print("battleTimerEvent.percentage: ${battleTimerEvent.percentage}");
 				bar.percentage = battleTimerEvent.percentage;
 			});
 
@@ -125,21 +127,60 @@ class CharacterList extends DisplayObjectContainer
 		});
 	}
 
-	void hit(Player targetPlayer)
+	void hit(Player targetPlayer) async
 	{
+		var completer = new Completer();
 		spriteCharacterMap.forEach((SpriteSheet key, Player player)
 		{
 			if(player == targetPlayer)
 			{
 				var oldCycle = key.currentCycle;
 				key.hit();
-				new Future.delayed(new Duration(milliseconds: 600), ()
+				var tween = new Tween(key, 0.6);
+				tween.onComplete = ()
 				{
 					key.currentCycle = oldCycle;
-				});
+					completer.complete();
+				};
+				juggler.addChain([tween]);
 			}
 		});
+		return completer.future;
 	}
+
+	Bitmap getBitmapFromPlayer(Player targetPlayer)
+	{
+		Bitmap bitmap;
+		spriteCharacterMap.forEach((Bitmap key, Player player)
+		{
+			if(player == targetPlayer)
+			{
+				bitmap = key;
+			}
+		});
+		return bitmap;
+	}
+
+//	void attacking(Player targetPlayer, Character targetToAttack) async
+//	{
+//		var completer = new Completer();
+//		Bitmap targetPlayerBitmap = getBitmapFromCharacter(targetPlayer);
+//		Bitmap targetToAttackBitmap = getBitmapFrom
+//
+//		juggler.addChain([
+//			_getGrayTween(bitmap, 0),
+//			_getResetTween(bitmap, 0.05),
+//			_getGrayTween(bitmap, 0.05),
+//			_getResetTween(bitmap, 0.05),
+//			_getGrayTween(bitmap, 0.05),
+//			_getResetTween(bitmap, 0.05)
+//		])
+//		.onComplete = ()
+//		{
+//			completer.complete();
+//		};
+//		return completer.future;
+//	}
 
 	SpriteSheet getSpriteSheetForPlayerCharacterType(Player player)
 	{
@@ -157,8 +198,12 @@ class CharacterList extends DisplayObjectContainer
 		return null;
 	}
 
-//	void render(RenderState renderState)
+//	Tween getAttackTween(DisplayObject attacker, DisplayObject targetToAttack, num time)
 //	{
-//		super.render(renderState);
+//		var tween = new Tween(displayObject, time);
+//
+//		return tween;
 //	}
+
+
 }

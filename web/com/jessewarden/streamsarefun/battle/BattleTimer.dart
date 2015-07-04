@@ -15,7 +15,7 @@ class BattleTimer implements Animatable
 	num lastTick = 0;
 
 	int speed = 200;
-	int battleSpeed = 3;
+	int battleSpeed = 10;
 	int effect = EFFECT_NORMAL;
 	String _mode = null;
 	StateMachine fsm;
@@ -141,6 +141,7 @@ class BattleTimer implements Animatable
 		if (gauge >= MAX)
 		{
 			gauge = MAX;
+			fsm.changeState("complete");
 			_streamController.add(new BattleTimerEvent(BattleTimerEvent.COMPLETE, this));
 			return false;
 		}
@@ -163,7 +164,12 @@ class BattleTimer implements Animatable
 //			_streamController.add(new BattleTimerEvent(BattleTimerEvent.COMPLETE, this));
 //		}
 
-		num result = (((effect * (speed + 15)) / 16));
+//					  ((96     * (Speed + 20)) * (255 - ((Battle Speed - 1) * 24))) / 16
+
+		num result = (((effect * (speed + 20)) / 16));
+//		num result = ((effect * (speed + 20)) * (255 - ((battleSpeed - 1) * 24))) / 16;
+//		print("result: $result");
+//		print("result1: $result1");
 		gauge += result.round();
 		// dispatch progress = gauge / MAX;
 		if (gauge >= MAX)
@@ -171,6 +177,7 @@ class BattleTimer implements Animatable
 //			print("gauge is larger than MAX, dispatching complete.");
 			// dispatch complete
 			gauge = MAX;
+			fsm.changeState("complete");
 			_streamController.add(new BattleTimerEvent(BattleTimerEvent.COMPLETE, this));
 			return false;
 		}

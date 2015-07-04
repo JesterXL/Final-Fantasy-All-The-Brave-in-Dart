@@ -5,24 +5,26 @@ class MonsterList extends DisplayObjectContainer
 
 	Initiative initiative;
 	ResourceManager resourceManager;
-	Stage stage;
-	RenderLoop renderLoop;
 	Map<Bitmap, Monster> spriteCharacterMap = new Map<Bitmap, Monster>();
 
 	TextDropper _textDropper;
+	Juggler juggler;
+	Stage stage;
 
 	MonsterList({Initiative this.initiative,
 	            ResourceManager this.resourceManager,
-	            Stage this.stage,
-	            RenderLoop this.renderLoop})
+				Juggler juggler,
+				Stage stage})
 	{
+		this.juggler = juggler;
+		this.stage = stage;
 	}
 
 	void init()
 	{
-		_textDropper = new TextDropper(stage, renderLoop);
+		_textDropper = new TextDropper(stage, juggler);
 
-		num startXMonster = 0;
+		num startXMonster = 120;
 		num startYMonster = 120;
 		// flying can be higher...
 
@@ -85,8 +87,22 @@ class MonsterList extends DisplayObjectContainer
 		});
 	}
 
-	void attacking(Monster targetMonster)
+	Bitmap getBitmapFromMonster(Monster targetMonster)
 	{
+		Bitmap bitmap;
+		spriteCharacterMap.forEach((Bitmap key, Monster monster)
+		{
+			if(monster == targetMonster)
+			{
+				bitmap = key;
+			}
+		});
+		return bitmap;
+	}
+
+	attacking(Monster targetMonster) async
+	{
+		var completer = new Completer();
 		Bitmap bitmap;
 		spriteCharacterMap.forEach((Bitmap key, Monster monster)
 		{
@@ -97,14 +113,19 @@ class MonsterList extends DisplayObjectContainer
 		});
 //		bitmap.filters = [new ColorMatrixFilter.grayscale()];
 
-		renderLoop.juggler.addChain([
+		juggler.addChain([
 			_getGrayTween(bitmap, 0),
 			_getResetTween(bitmap, 0.05),
 			_getGrayTween(bitmap, 0.05),
 			_getResetTween(bitmap, 0.05),
 			_getGrayTween(bitmap, 0.05),
 			_getResetTween(bitmap, 0.05)
-		]);
+		])
+		.onComplete = ()
+		{
+			completer.complete();
+		};
+		return completer.future;
 	}
 
 	Tween _getGrayTween(DisplayObject displayObject, num time)
@@ -133,9 +154,4 @@ class MonsterList extends DisplayObjectContainer
 	{
 		return resourceManager.getBitmapData(monster.monsterType);
 	}
-
-//	void render(RenderState renderState)
-//	{
-//		super.render(renderState);
-//	}
 }

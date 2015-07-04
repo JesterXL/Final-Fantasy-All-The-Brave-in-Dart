@@ -9,6 +9,7 @@ import '../items/items.dart';
 import '../relics/relics.dart';
 import 'package:jxlstatemachine/jxlstatemachine.dart';
 import 'package:stagexl/stagexl.dart';
+import 'package:frappe/frappe.dart' as frappe;
 
 part 'BattleTimer.dart';
 part 'BattleTimerEvent.dart';
@@ -24,3 +25,9 @@ part 'TargetHitResult.dart';
 part 'BattleUtils.dart';
 part 'HitResult.dart';
 part 'ActionResult.dart';
+part 'Spell.dart';
+part 'Item.dart';
+
+part 'queue/Intent.dart';
+part 'queue/IntentQueue.dart';
+part 'queue/IntentQueueEvent.dart';

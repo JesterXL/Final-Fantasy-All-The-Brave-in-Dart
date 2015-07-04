@@ -21,6 +21,20 @@ class Character
 
 	int ID = -1;
 	static int INCREMENT = 0;
+	bool clear = false;
+	bool protectedFromWound = false;
+	bool sleep = false;
+	bool petrify = false;
+	bool freeze = false;
+	bool stop = false;
+	bool safe = false;
+	bool shell = false;
+	bool defending = false;
+	bool morph = false;
+	bool back = false;
+	bool image = false;
+	bool berserk = false;
+
 
 
 	Item rightHand = null;

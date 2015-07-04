@@ -4,9 +4,9 @@ class TextDropper
 {
 	List<TextField> _pool = new List<TextField>();
 	Stage _stage;
-	RenderLoop _renderLoop;
+	Juggler _juggler;
 
-	TextDropper(Stage this._stage, RenderLoop this._renderLoop)
+	TextDropper(Stage this._stage, Juggler this._juggler)
 	{
 	}
 
@@ -32,16 +32,16 @@ class TextDropper
 		field.defaultTextFormat.color = color;
 
 		// TODO: object pool these
-		Tween tweenUp = new Tween(field, 0.25, TransitionFunction.easeOutExponential);
+		Tween tweenUp = new Tween(field, 0.25, Transition.easeOutExponential);
 		tweenUp.animate.y.to(field.y - 40);
 
-		Tween tweenDown = new Tween(field, 0.45, TransitionFunction.easeOutBounce);
+		Tween tweenDown = new Tween(field, 0.45, Transition.easeOutBounce);
 		tweenDown.animate.y.to(field.y);
 
 		Tween tweenRemove = new Tween(field, 0.6);
 		tweenRemove.onComplete = () => _cleanUp(field);
 
-		_renderLoop.juggler.addChain([tweenUp, tweenDown, tweenRemove]);
+		_juggler.addChain([tweenUp, tweenDown, tweenRemove]);
 	}
 
 	TextField _getField()

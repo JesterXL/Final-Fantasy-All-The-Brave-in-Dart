@@ -41,7 +41,7 @@ class BattleTimerBar extends DisplayObjectContainer
 		}
 	}
 
-	BattleTimerBar(this.juggler)
+	 BattleTimerBar(this.juggler)
 	{
 		init();
 	}

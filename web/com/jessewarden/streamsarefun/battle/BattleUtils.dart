@@ -316,7 +316,8 @@ class BattleUtils
 		return getRandomNumberFromRange(0, 3);
 	}
 
-	static HitResult getHit({int randomHitOrMissValue: 0,
+	static HitResult getHit({
+	                        int randomHitOrMissValue: 0,
 		int randomStaminaHitOrMissValue: 0,
 		int randomImageStatusRemovalValue: 0,
 		bool isPhysicalAttack: true,
