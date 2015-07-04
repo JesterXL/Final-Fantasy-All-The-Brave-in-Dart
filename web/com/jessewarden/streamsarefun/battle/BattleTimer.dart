@@ -36,17 +36,14 @@ class BattleTimer implements Animatable
 	bool get enabled => _enabled;
 	bool set enabled(bool newValue)
 	{
-		if(_enabled != newValue)
+		_enabled = newValue;
+		if(newValue == true)
 		{
-			_enabled = newValue;
-			if(newValue == true)
-			{
-				fsm.changeState('active');
-			}
-			else
-			{
-				fsm.changeState('disabled');
-			}
+			fsm.changeState('active');
+		}
+		else
+		{
+			fsm.changeState('disabled');
 		}
 	}
 
@@ -107,11 +104,13 @@ class BattleTimer implements Animatable
 
 		bool tickResult = false;
 		lastTick = lastTick + time;
-//		print("time: $time, lastTick: $lastTick");
-		var result1 = (lastTick / TIME_SLICE);
-//		print("lastTick / TIME_SLICE: $result1");
 		int result = (lastTick / TIME_SLICE);
-//		print("result: $result");
+		if(mode == MODE_MONSTER)
+		{
+			print("================");
+			print("time: $time, lastTick: $lastTick");
+			print("lastTick / TIME_SLICE: $result");
+		}
 		if (result > 0)
 		{
 			num remainder = lastTick - (result * TIME_SLICE);
@@ -121,6 +120,10 @@ class BattleTimer implements Animatable
 			{
 				tickResult = modeFunc();
 				result--;
+			}
+			if(tickResult == false)
+			{
+				return false;
 			}
 			num percentage = gauge / MAX;
 //			print("percentage: $percentage");
@@ -142,6 +145,7 @@ class BattleTimer implements Animatable
 		{
 			gauge = MAX;
 			fsm.changeState("complete");
+			print("BattleTimer::complete");
 			_streamController.add(new BattleTimerEvent(BattleTimerEvent.COMPLETE, this));
 			return false;
 		}

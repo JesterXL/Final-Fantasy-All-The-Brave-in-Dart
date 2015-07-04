@@ -19,7 +19,6 @@ class Initiative
 
 	void init()
 	{
-
 		_streamController = new StreamController.broadcast();
 		stream = _streamController.stream;
 
@@ -49,8 +48,10 @@ class Initiative
 		{
 			if(event is BattleTimerEvent)
 			{
+				event.character = character;
 				_streamController.add(event);
 			}
+			return true;
 		})
 		.where((BattleTimerEvent event)
 		{
@@ -150,12 +151,16 @@ class Initiative
 
 	void resetCharacterTimer(Character character)
 	{
+		print("Initiative::resetCharacterTimer");
 		TimerCharacterMap object = _battleTimers.firstWhere((object)
 		{
 			return object.character == character;
 		});
+		print("state before: ${object.battleTimer.fsm.currentState.name}");
 		object.battleTimer.reset();
 		object.battleTimer.enabled = true;
+		print("state after: ${object.battleTimer.fsm.currentState.name}");
+		print("Juggler contains: ${juggler.contains(object.battleTimer)}");
 		juggler.add(object.battleTimer);
 	}
 

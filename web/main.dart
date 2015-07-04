@@ -19,8 +19,6 @@ RenderLoop renderLoop;
 ResourceManager resourceManager;
 CursorFocusManager cursorManager;
 
-
-
 void main()
 {
 	querySelector('#output').text = 'Your Dart app is running.';
@@ -30,7 +28,7 @@ void main()
 
 	StageOptions options = new StageOptions();
 	options.renderEngine = RenderEngine.Canvas2D;
-	stage = new Stage(canvas, width: 3000, height: 3000, options: options);
+	stage = new Stage(canvas, width: 1024, height: 768, options: options);
 	renderLoop = new RenderLoop();
 	renderLoop.addStage(stage);
 
@@ -40,7 +38,7 @@ void main()
 	//testGameLoop();
 //  testBattleTimer();
 //	testTextDropper();
-//	testBattleTimerBar();
+	testBattleTimerBar();
 //	testBattleTimerBars();
 //	testInitiative();
 //	testMath();
@@ -59,8 +57,9 @@ void main()
 //testAsyncTweens();
 //	testAsyncTweens2();
 //testAwaitStreams();
-testCursorManagerMonsterList();
+//testCursorManagerMonsterList();
 //testFixtures();
+//	testBasicAttack();
 }
 
 
@@ -157,6 +156,16 @@ void testBattleTimerBar()
 	{
 		bar.percentage = event.percentage;
 		print("bar.percentage: ${bar.percentage}");
+		if(event.type == BattleTimerEvent.COMPLETE)
+		{
+			timer.enabled = false;
+			new Future.delayed(new Duration(seconds: 2), ()
+			{
+				timer.reset();
+				timer.enabled = true;
+				juggler.add(timer);
+			});
+		}
 	});
 	juggler.add(timer);
 	stage.renderLoop.juggler.add(juggler);
@@ -342,8 +351,7 @@ void testWarriorSprite()
 
 void testCharacterList()
 {
-	Juggler juggler = new Juggler();
-	stage.renderLoop.juggler.add(juggler);
+	var juggler = Fixtures.getJugglerAndAddToStage(stage);
 
 	ObservableList<Player> players = new ObservableList<Player>();
 	players.add(new Player(characterType: Player.WARRIOR));
@@ -502,15 +510,9 @@ void testBattleMenu()
 void testInitiativeAndBattleMenu()
 {
 	resourceManager.addSound("menuBeep", "audio/menu-beep.mp3");
-	CursorFocusManager cursorManager = new CursorFocusManager(stage, resourceManager);
+	var juggler = Fixtures.getJugglerAndAddToStage(stage);
 
-	Juggler juggler = new Juggler();
-	stage.renderLoop.juggler.add(juggler);
-
-	ObservableList<Player> players = new ObservableList<Player>();
-	players.add(new Player(Player.WARRIOR));
-	players.add(new Player(Player.WARRIOR));
-	players.add(new Player(Player.WARRIOR));
+	ObservableList<Player> players = Fixtures.getPlayerList();
 
 	ObservableList<Monster> monsters = new ObservableList<Monster>();
 	monsters.add(new Monster(Monster.LEAFER));
@@ -546,53 +548,45 @@ void testInitiativeAndBattleMenu()
 
 void testBasicAttack()
 {
-	resourceManager.addSound("menuBeep", "audio/menu-beep.mp3");
-	CursorFocusManager cursorManager = new CursorFocusManager(stage, resourceManager);
-
-	Juggler juggler = new Juggler();
-	stage.renderLoop.juggler.add(juggler);
-
-	ObservableList<Player> players = new ObservableList<Player>();
-	Player player1 = Fixtures.getLockeLevel7();
-
-	players.add(player1);
-//	players.add(new Player(characterType: Player.WARRIOR, name: 'Celes', speed: getRandomSpeed()));
-//	players.add(new Player(characterType: Player.WARRIOR, name: 'Sabin', speed: getRandomSpeed()));
-
-	ObservableList<Monster> monsters = new ObservableList<Monster>();
-	Monster monster1 = Fixtures.getAreneid();
-	monsters.add(monster1);
-
-	Initiative initiative = new Initiative(juggler, players, monsters);
-	BattleMenu battleMenu = new BattleMenu(resourceManager, cursorManager, stage);
-	CharacterList characterList = new CharacterList(
+	var juggler = Fixtures.getJugglerAndAddToStage(stage);
+	var players = Fixtures.getPlayerList();
+	var monsters = Fixtures.getMonsterList();
+	var initiative = new Initiative(juggler, players, monsters);
+	var characterList = new CharacterList(
 		initiative: initiative,
 		resourceManager: resourceManager,
 		juggler: juggler,
 		stage: stage
 	);
 	stage.addChild(characterList);
-
-	MonsterList monsterList = new MonsterList(
+	var monsterList = new MonsterList(
 		initiative: initiative,
 		resourceManager: resourceManager,
 		juggler: juggler,
 		stage: stage
 	);
 	stage.addChild(monsterList);
-
-	IntentQueue queue = new IntentQueue(juggler, initiative, characterList, monsterList);
+	var battleMenu = new BattleMenu(resourceManager, cursorManager, stage, monsterList, characterList);
+	var queue = new IntentQueue(juggler, initiative, characterList, monsterList);
 	juggler.add(queue);
 	queue.stream.listen((Intent completedIntent)
 	{
+		print("queue::stream::listen::intent completed, resetting timer for: ${completedIntent.attacker}");
 		initiative.resetCharacterTimer(completedIntent.attacker);
 	});
+
+	Character getRandomTarget(ObservableList<Character> targets)
+	{
+		List copy = targets.toList();
+		Random random = new Random(copy.length - 1);
+		copy.shuffle(random);
+		return copy[0];
+	}
 
 	var streamSubscription;
 	var battleMenuStreamSubscription;
 	var actingPlayer;
-	// TODO: gotta make a queue of these actions
-	StateMachine battleStateMachine = new StateMachine();
+	var battleStateMachine = new StateMachine();
 	battleStateMachine.addState('loading');
 	battleStateMachine.addState('waiting',
 		enter: ()
@@ -614,8 +608,8 @@ void testBasicAttack()
 							break;
 
 						case InitiativeEvent.MONSTER_READY:
-							Character target = getRandomTarget(players);
 							var intent = new Intent();
+							var target = getRandomTarget(players);
 							intent.attacker = event.character;
 							intent.targets = [target];
 							intent.isPhysicalAttack = true;
@@ -636,15 +630,6 @@ void testBasicAttack()
 
 				});
 			}
-			else
-			{
-//				initiative.start();
-			}
-		},
-
-		exit: ()
-		{
-//			initiative.pause();
 		}
 	);
 	battleStateMachine.addState('characterChoosing',
@@ -654,18 +639,16 @@ void testBasicAttack()
 			battleMenuStreamSubscription = battleMenu.stream
 			.listen((BattleMenuEvent event)
 			{
-				print("clicked: ${event.item}");
-				Character target = getRandomTarget(monsters);
-				TargetHitResult targetHitResult = BattleUtils.getHitAndApplyDamage(
-					actingPlayer,
-					targetStamina: target.stamina
-				);
-//				print("attacking target: $target");
-				print("targetHitResult: ${targetHitResult.damage}");
-				Character lastCharacter = actingPlayer;
-				target.hitPoints = target.hitPoints - targetHitResult.damage;
-				print("actingPlayer's timer getting reset: $lastCharacter");
-				initiative.resetCharacterTimer(lastCharacter);
+				if(event.item is Bitmap)
+				{
+					var monster = monsterList.getMonsterForBitmap(event.item);
+					var intent = new Intent();
+					intent.attacker = actingPlayer;
+					intent.targets = [monster];
+					intent.isPhysicalAttack = true;
+					intent.hitRate = actingPlayer.hitRate;
+					queue.addIntent(intent);
+				}
 				battleStateMachine.changeState('waiting');
 
 			});
@@ -675,6 +658,7 @@ void testBasicAttack()
 		{
 			actingPlayer = null;
 			battleMenuStreamSubscription.cancel();
+			battleMenuStreamSubscription = null;
 		}
 	);
 	battleStateMachine.addState('win');
@@ -690,14 +674,14 @@ void testBasicAttack()
 	resourceManager.addTextureAtlas('thief', 'images/thief/thief.json', TextureAtlasFormat.JSONARRAY);
 	resourceManager.addBitmapData("Leafer", "images/monsters/leafer.png");
 	resourceManager.addBitmapData("Areneid", "images/monsters/areneid.png");
+	resourceManager.addSound("menuBeep", "audio/menu-beep.mp3");
 
 	resourceManager.load()
 	.then((_)
 	{
-		battleStateMachine.initialState = 'waiting';
 		characterList.init();
 		monsterList.init();
-		initiative.start();
+		battleStateMachine.changeState('waiting');
 	});
 }
 

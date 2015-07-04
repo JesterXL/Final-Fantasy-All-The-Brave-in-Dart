@@ -80,7 +80,6 @@ class CharacterList extends DisplayObjectContainer
 			.listen((event)
 			{
 				BattleTimerEvent battleTimerEvent = event as BattleTimerEvent;
-				print("battleTimerEvent.percentage: ${battleTimerEvent.percentage}");
 				bar.percentage = battleTimerEvent.percentage;
 			});
 

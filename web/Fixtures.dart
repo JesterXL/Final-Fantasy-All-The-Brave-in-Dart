@@ -1,6 +1,8 @@
 library fixturesandmocksrarara;
 
 import 'com/jessewarden/streamsarefun/battle/battlecore.dart';
+import 'package:stagexl/stagexl.dart';
+import 'package:observe/observe.dart';
 
 class Fixtures
 {
@@ -38,15 +40,57 @@ class Fixtures
 
 	static Monster getAreneid()
 	{
-		Monster monster1 = new Monster(Monster.ARENEID);
-		monster1.hitPoints = 87;
-		monster1.battlePower = 20;
-		monster1.magicPower = 10;
-		monster1.speed = 30;
-		monster1.defense = 80;
-		monster1.magicDefense = 135;
-		monster1.evade = 0;
-		monster1.magicBlock = 0;
-		return monster1;
+		Monster monster = new Monster(Monster.ARENEID);
+		monster.level = 6;
+		monster.hitPoints = 87;
+		monster.battlePower = 20;
+		monster.magicPower = 10;
+		monster.speed = 30;
+		monster.defense = 80;
+		monster.magicDefense = 135;
+		monster.evade = 0;
+		monster.magicBlock = 0;
+		return monster;
+	}
+
+	static Monster getLeafer()
+	{
+		Monster monster = new Monster(Monster.LEAFER);
+		monster.level = 5;
+		monster.hitPoints = 33;
+		monster.battlePower = 13;
+		monster.magicPower = 10;
+		monster.speed = 30;
+		monster.defense = 60;
+		monster.magicDefense = 140;
+		monster.evade = 0;
+		monster.magicBlock = 0;
+		return monster;
+	}
+
+	static Juggler getJugglerAndAddToStage(Stage stage)
+	{
+		Juggler juggler = new Juggler();
+		stage.renderLoop.juggler.add(juggler);
+		return juggler;
+	}
+
+	static List<Player> getPlayerList()
+	{
+		var speed = 130;
+		ObservableList<Player> players = new ObservableList<Player>();
+		players.add(new Player(characterType: Player.WARRIOR, speed: speed));
+		players.add(new Player(characterType: Player.BLACK_MAGE, speed: speed));
+		players.add(new Player(characterType: Player.THIEF, speed: speed));
+		return players;
+	}
+
+	static List<Monster> getMonsterList()
+	{
+		ObservableList<Monster> monsters = new ObservableList<Monster>();
+		monsters.add(Fixtures.getAreneid());
+//		monsters.add(Fixtures.getLeafer());
+//		monsters.add(Fixtures.getLeafer());
+		return monsters;
 	}
 }

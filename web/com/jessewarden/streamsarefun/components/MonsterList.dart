@@ -24,7 +24,7 @@ class MonsterList extends DisplayObjectContainer
 	{
 		_textDropper = new TextDropper(stage, juggler);
 
-		num startXMonster = 120;
+		num startXMonster = 40;
 		num startYMonster = 120;
 		// flying can be higher...
 
@@ -54,8 +54,8 @@ class MonsterList extends DisplayObjectContainer
 			addChild(bitmap);
 			bitmap.x = startXMonster;
 			bitmap.y = startYMonster;
-			startXMonster += 16;
-			startYMonster += 36;
+			startXMonster += bitmap.width / 4 + 16;
+			startYMonster += bitmap.height / 2 + 36;
 
 			monster.stream.listen((CharacterEvent event)
 			{
@@ -105,7 +105,7 @@ class MonsterList extends DisplayObjectContainer
 		return spriteCharacterMap[bitmap];
 	}
 
-	attacking(Monster targetMonster) async
+	Future attacking(Monster targetMonster) async
 	{
 		var completer = new Completer();
 		Bitmap bitmap;
@@ -116,6 +116,14 @@ class MonsterList extends DisplayObjectContainer
 				bitmap = key;
 			}
 		});
+		if(bitmap == null)
+		{
+			print("Could not find Bitmap for given monster: $targetMonster");
+		}
+		else
+		{
+			print("Found a bitmap: $bitmap");
+		}
 //		bitmap.filters = [new ColorMatrixFilter.grayscale()];
 
 		juggler.addChain([

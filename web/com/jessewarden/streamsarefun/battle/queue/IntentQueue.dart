@@ -84,18 +84,10 @@ class IntentQueue implements Animatable
 		}
 	}
 
-	Character getRandomTarget(ObservableList<Character> targets)
-	{
-		List copy = targets.toList();
-		Random random = new Random(copy.length - 1);
-		copy.shuffle(random);
-		return copy[0];
-	}
-
-	void makeMonsterPhysicalAttack(Intent intent) async
+	Future makeMonsterPhysicalAttack(Intent intent) async
 	{
 		var completer = new Completer();
-		Character target = getRandomTarget(initiative.players);
+		var target = intent.targets[0];
 		TargetHitResult targetHitResult = BattleUtils.getHitAndApplyDamage(
 			intent.attacker,
 			isPhysicalAttack: true,
@@ -127,7 +119,7 @@ class IntentQueue implements Animatable
 			attackerHasBerserkStatusAndPhysicalAttack: intent.attacker.berserk
 		);
 		// TODO: need to handle weapons with an element type
-		await monsterList.attacking(event.character);
+		await monsterList.attacking(intent.attacker);
 		if(targetHitResult.hit == true)
 		{
 			target.hitPoints = target.hitPoints - targetHitResult.damage;
@@ -147,13 +139,13 @@ class IntentQueue implements Animatable
 				monsterList.miss(target);
 			}
 		}
-		var tween = new Tween(this, 1);
+		var tween = new Translation(0, 1000, 1);
 		tween.onComplete = ()
 		{
-			intentComplete();
+			intentComplete(intent);
 			completer.complete();
 		};
-		juggler.addTween(tween);
+		juggler.add(tween);
 		return completer.future;
 	}
 
