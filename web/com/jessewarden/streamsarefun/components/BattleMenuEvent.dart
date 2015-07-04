@@ -5,7 +5,7 @@ class BattleMenuEvent
 	static const String ITEM_SELECTED = "itemSelected";
 
 	String type;
-	String item;
+	var item;
 
 	BattleMenuEvent(String type, String item)
 	{

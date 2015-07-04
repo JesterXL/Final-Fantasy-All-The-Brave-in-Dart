@@ -922,8 +922,9 @@ void testCursorManagerMonsterList()
 	battleMenu.stream
 	.listen((BattleMenuEvent event)
 	{
-		print("event: $event");
-
+		var bitmap = event.item;
+		var monster = monsterList.getMonsterForBitmap(bitmap);
+		print("monster: ${monster}");
 	});
 
 	resourceManager.addTextureAtlas('warrior', 'images/warrior/warrior.json', TextureAtlasFormat.JSONARRAY);

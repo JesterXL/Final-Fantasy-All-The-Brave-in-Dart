@@ -100,6 +100,11 @@ class MonsterList extends DisplayObjectContainer
 		return bitmap;
 	}
 
+	Monster getMonsterForBitmap(Bitmap bitmap)
+	{
+		return spriteCharacterMap[bitmap];
+	}
+
 	attacking(Monster targetMonster) async
 	{
 		var completer = new Completer();

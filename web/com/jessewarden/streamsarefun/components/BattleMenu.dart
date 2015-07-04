@@ -190,14 +190,23 @@ class BattleMenu
 	StreamSubscription getCursorManagerStreamSubscriptionForAttackTargets()
 	{
 		return cursorManager.stream
-		.where((event)
-		{
-			return event.type == CursorFocusManagerEvent.SELECTED;
-		})
 		.listen((CursorFocusManagerEvent event)
 		{
-			fsm.changeState('hide');
-			_controller.add(new BattleMenuEvent(BattleMenuEvent.ITEM_SELECTED, selectedItem));
+			print("event: ${event.type}");
+			String currentState = fsm.currentState.name;
+			switch(event.type)
+			{
+				case CursorFocusManagerEvent.MOVE_RIGHT:
+				case CursorFocusManagerEvent.MOVE_LEFT:
+					fsm.changeState("main");
+					break;
+
+				case CursorFocusManagerEvent.SELECTED:
+					var selection = cursorManager.currentTarget;
+					fsm.changeState('hide');
+					_controller.add(new BattleMenuEvent(BattleMenuEvent.ITEM_SELECTED, selection));
+					break;
+			}
 		});
 	}
 

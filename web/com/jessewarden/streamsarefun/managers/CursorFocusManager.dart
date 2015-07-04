@@ -6,6 +6,13 @@ class CursorFocusManager
 	ResourceManager _resourceManager;
 	Bitmap _cursorBitmap;
 	StreamController _controller;
+	ObservableList<DisplayObject> targets = new ObservableList<DisplayObject>();
+
+	int _selectedIndex = -1;
+
+	int get selectedIndex => _selectedIndex;
+
+	get currentTarget => targets[selectedIndex];
 
 	Stream stream;
 
@@ -96,12 +103,6 @@ class CursorFocusManager
 		_setCursorVisible(false);
 	}
 
-
-	ObservableList<DisplayObject> targets = new ObservableList<DisplayObject>();
-
-	int _selectedIndex = -1;
-
-	int get selectedIndex => _selectedIndex;
 	void set selectedIndex(int newValue)
 	{
 		_selectedIndex = newValue;
